@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "drop schema objects"
-date: 2026-02-25
 ---
 ```sql
 SET TIME ON 
