@@ -1,3 +1,66 @@
+--connection count queries from CDB
+select count(*) cnt,service_name from v$session 
+where service_name not like 'SYS$%' 
+group by service_name order by cnt desc;
+
+SELECT 
+    NVL(service_name, 'TOTAL') as service_name, 
+    COUNT(*) as cnt
+FROM v$session 
+WHERE service_name NOT LIKE 'sys$%' 
+GROUP BY ROLLUP(service_name)
+ORDER BY (CASE WHEN service_name IS NULL THEN 1 ELSE 0 END), cnt ASC;
+ 
+SELECT 
+    service_name, 
+    COUNT(*) as cnt,
+    SUM(COUNT(*)) OVER () as total_sessions
+FROM v$session 
+WHERE service_name NOT LIKE 'sys$%' 
+GROUP BY service_name 
+ORDER BY cnt DESC;
+ 
+ 
+col username for a25
+col service_name for a25
+select count(*) cnt,service_name,username from v$session 
+where service_name not like 'SYS$%' 
+group by service_name,username order by service_name,username;
+
+ 
+select 
+	count(*) cnt,service_name,username, SUM(COUNT(*)) OVER () as total_sessions
+from v$session 
+where service_name not like 'SYS$%' 
+group by service_name,username order by service_name,username;
+ 
+SELECT 
+    NVL(service_name, 'TOTAL') as service_name, 
+    COUNT(*) as cnt
+FROM v$session 
+WHERE service_name NOT LIKE 'sys$%' 
+GROUP BY ROLLUP(service_name)
+
+WITH base_counts AS (
+    SELECT 
+        CAST(service_name AS VARCHAR2(64)) as svc, 
+        CAST(username AS VARCHAR2(64)) as usr, 
+        COUNT(*) as cnt
+    FROM v$session
+    WHERE service_name NOT LIKE 'SYS$%'
+    GROUP BY service_name, username
+)
+SELECT 
+    CASE WHEN GROUPING(svc) = 1 THEN 'GRAND TOTAL' ELSE svc END AS service_name,
+    CASE WHEN GROUPING(usr) = 1 THEN 
+    CASE WHEN GROUPING(svc) = 1 THEN '---' ELSE 'Service Total' END
+    ELSE usr END AS username,
+    SUM(cnt) AS session_count
+FROM base_counts
+GROUP BY ROLLUP(svc, usr)
+ORDER BY GROUPING(svc), svc, GROUPING(usr), session_count DESC;
+
+
 --Query to find list of schemas having 30+ tables and not having any connections either directly or as schema
 
 SELECT 
