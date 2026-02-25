@@ -1,7 +1,3 @@
----
-layout: default
-title: "drop schema objects"
----
 ```sql
 SET TIME ON 
 SET TIMING ON
