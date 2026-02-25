@@ -1,5 +1,7 @@
 ## Hi there 👋
 
+Think of this site as my open digital notebook. While I use it to archive my own notes, I hope you find the scripts and tips useful for your own projects
+
 <!--
 **mydatabasetips/mydatabasetips** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
