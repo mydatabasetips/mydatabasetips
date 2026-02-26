@@ -1,0 +1,33 @@
+
+
+DECLARE
+  v_num      NUMBER := 12345;
+  v_char11   VARCHAR2(11);
+  newv_char11 VARCHAR2(11);
+BEGIN
+  v_char11 := LPAD(TO_CHAR(v_num), 11, '0');
+  newv_char11 := TO_CHAR(v_num);
+  DBMS_OUTPUT.PUT_LINE('Original number: ' || v_num);
+  DBMS_OUTPUT.PUT_LINE('Converted string: ' || v_char11);
+  DBMS_OUTPUT.PUT_LINE('Length of string: ' || LENGTH(v_char11));
+  
+  DBMS_OUTPUT.PUT_LINE('Converted string: ' || newv_char11);
+  DBMS_OUTPUT.PUT_LINE('Length of string: ' || LENGTH(newv_char11));
+END;
+/
+
+
+
+SET SERVEROUTPUT ON
+DECLARE
+  TIN NUMBER;
+  CHARTIN VARCHAR2(9);
+BEGIN
+    SELECT TIN INTO TIN FROM BES.CLIENT WHERE CLIENT_ID=1031308;
+    SELECT TIN INTO CHARTIN FROM BES.CLIENT WHERE CLIENT_ID=1031308;
+    DBMS_OUTPUT.PUT_LINE(TIN);
+    DBMS_OUTPUT.PUT_LINE(CHARTIN);
+    DBMS_OUTPUT.PUT_LINE('Length of string: ' || LENGTH(CHARTIN));
+     DBMS_OUTPUT.PUT_LINE('Length of string: ' || LENGTH(TIN));
+END;
+/
