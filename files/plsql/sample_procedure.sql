@@ -1,0 +1,39 @@
+--working
+
+CREATE OR REPLACE PROCEDURE create_grant_syn(v_schema VARCHAR2) AS
+BEGIN
+    FOR grantSyn_cur IN 
+	(
+	 SELECT OBJECT_NAME, OBJECT_TYPE
+	FROM DBA_OBJECTS
+	WHERE
+		OWNER=v_schema
+		AND OBJECT_TYPE IN ('SEQUENCE','TABLE','VIEW','FUNCTION','PACKAGE','PROCEDURE','TYPE')
+		ORDER BY OBJECT_TYPE, OBJECT_NAME ASC
+     )
+	LOOP
+        DBMS_OUTPUT.PUT_LINE(grantSyn_cur.OBJECT_NAME||' and '||grantSyn_cur.OBJECT_TYPE);
+    END LOOP;
+END;
+/
+
+
+--working
+
+CREATE OR REPLACE PROCEDURE create_grant_syn_test(v_schema VARCHAR2) AS
+
+CURSOR grantSyn_cur IS
+    SELECT 	OBJECT_NAME, OBJECT_TYPE
+	FROM DBA_OBJECTS
+	WHERE
+		OWNER=v_schema
+		AND OBJECT_TYPE IN ('SEQUENCE','TABLE','VIEW','FUNCTION','PACKAGE','PROCEDURE','TYPE')
+		ORDER BY OBJECT_TYPE, OBJECT_NAME ASC;
+BEGIN
+
+   FOR grantSyn_cur_ IN grantSyn_cur
+   LOOP
+        DBMS_OUTPUT.PUT_LINE(grantSyn_cur_.OBJECT_NAME||' and '||grantSyn_cur_.OBJECT_TYPE);
+    END LOOP;
+END;
+/
