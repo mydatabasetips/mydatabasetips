@@ -1,0 +1,281 @@
+
+oracle@sdxdc-mdmnpdb02 (for mdmstg)
+
+
+select distinct(substr(name,1,15)) from v$datafile;
+
+/mdmstg_4/orada
+/mdmstg_1/orada
+/mdmstg_3/orada
+/mdmstg_2/orada
+
+select distinct(substr(name,1,15)) from v$tempfile;
+
+/mdmstg_temp/or
+/mdmstg_3/orada
+
+select distinct(substr(member,1,15)) from v$logfile;
+
+/mdmstg_redo1/o
+/mdmstg_redo2/o
+
+
+df -gt /mdmstg*
+
+Filesystem    GB blocks      Used      Free %Used Mounted on
+/dev/mdmstgORA    628.00    592.63     35.37   95% /mdmstg_1
+/dev/mdmstg2ORA    355.00    319.05     35.95   90% /mdmstg_2
+/dev/mdmstg3ORA    489.00    397.08     91.92   82% /mdmstg_3
+/dev/mdmstg4ORA    315.00    278.04     36.96   89% /mdmstg_4
+/dev/mdmredo1ORA     19.00      0.25     18.75    2% /mdmstg_redo1
+/dev/mdmredo2ORA     19.00      0.25     18.75    2% /mdmstg_redo2
+/dev/mdmtempORA     64.00     49.25     14.75   77% /mdmstg_temp
+
+
+df -gt /opt/oracle/admin/mdmstg/arch
+
+Filesystem    GB blocks      Used      Free %Used Mounted on
+/dev/admarchORA     60.00      0.01     59.99    1% /opt/oracle/admin/mdmstg/arch
+
+ 
+Need 54 GB added to /mdmdev2_2
+Need 75 GB added to /mdmdev2_3
+
+
+
+1) export schemas to be saved  - (do you regenerate schemas to be saved before starting? )
+
+set pages 200
+select username from dba_users 
+where username not in
+(
+--default accounts
+'ANONYMOUS'
+,'APPQOSSYS'
+,'AUDSYS'
+,'DBSNMP'
+,'DIP'
+,'GGSYS'
+,'GSMADMIN_INTERNAL'
+,'GSMCATUSER'
+,'GSMUSER'
+,'OJVMSYS'
+,'OPS$ORACLE'
+,'ORACLE_OCM'
+,'OUTLN'
+,'REMOTE_SCHEDULER_AGENT'
+,'SYS'
+,'SYS$UMF'
+,'SYSBACKUP'
+,'SYSDG'
+,'SYSKM'
+,'SYSRAC'
+,'SYSTEM'
+,'WMSYS'
+,'XDB'
+,'XS$NULL'
+--app accounts to be refreshed from prod
+,'AVOS'
+,'CMX_ORS'
+,'CMX_SYSTEM'
+,'MDM_ETL_STAGE'
+,'MDM_BACKUP'
+--DBA accounts
+,'PKANCHERLA'
+,'PHAHN'
+,'ESCHAAF'
+,'LGLAUBER'
+)
+order by 1;
+
+--include the updated schema list in /u00/ora/prod/expdp_mdmstg_before_refresh.par
+
+set pages 1000
+set lines 1000
+col owner for a20
+col DIRECTORY_NAME for a30
+col DIRECTORY_PATH for a75
+
+select * from dba_directories order by DIRECTORY_NAME;
+
+SYS                  DATA_PUMP_ORABACK_DIR          /oraback/exp/mdmstg    
+
+df -gt /oraback/exp/mdmstg
+Filesystem    GB blocks      Used      Free %Used Mounted on
+/dev/orabackORA     77.00     10.10     66.90   14% /oraback
+
+--for MDMSTG if needed
+CREATE OR REPLACE DIRECTORY DATA_PUMP_ORABACK_DIR AS '/oraback/exp/mdmstg';
+
+CREATE OR REPLACE DIRECTORY DATA_PUMP_ORABACK_DIR1 AS '/mdmstg_temp/exp';
+
+/u00/ora/prod/expdp_mdmstg_before_refresh.par
+
+nohup expdp parfile=/u00/ora/prod/expdp_mdmstg_before_refresh.par > /u00/ora/prod/expdp_mdmstg_before_refresh.out &
+
+ORA-39165: Schema DBSFWUSER was not found.
+Master table "SYS"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_SCHEMA_01 is:
+  /oraback/exp/mdmstg/expdp_mdmstg_before_refresh_01.dmp
+  /oraback/exp/mdmstg/expdp_mdmstg_before_refresh_02.dmp
+  /oraback/exp/mdmstg/expdp_mdmstg_before_refresh_03.dmp
+  /oraback/exp/mdmstg/expdp_mdmstg_before_refresh_04.dmp
+Job "SYS"."SYS_EXPORT_SCHEMA_01" completed with 1 error(s) at Mon Feb 20 03:53:11 2023 elapsed 0 00:12:16
+
+/****************************************************************************************************************************************/
+--MDM_BACKUP is huge, remove and try to back it up at different place, if needed - not needed as per team
+
+--for MDM_BACKUP
+
+nohup expdp parfile=/u00/ora/prod/expdp_mdmstg_before_refresh1.par > /u00/ora/prod/expdp_mdmstg_before_refresh1.out &
+
+/****************************************************************************************************************************************/
+
+
+2) shutdown mdmdev2, startup mdmstg, remove datafiles  
+setenv ora mdmstg 
+shutdown immediate;
+startup nomount
+
+cd /mdmstg_1/oradata/mdmstg
+rm * - all files
+cd /mdmstg_2/oradata/mdmstg
+rm * - all files
+cd /mdmstg_3/oradata/mdmstg
+rm * - all files
+cd /mdmstg_4/oradata/mdmstg
+rm * - all files
+cd /mdmstg_temp/oradata/mdmstg
+rm * - all files
+cd /mdmstg_redo1/oradata/mdmstg
+rm * - all files
+cd /mdmstg_redo2/oradata/mdmstg
+rm * - all files
+
+
+
+3) Update date in /u00/ora/files/mdmstg/rman_dup_mdmstg.rman
+
+--for mdmstg
+
+
+/u00/ora/files/mdmstg/rman_dup_mdmstg.rman
+
+--check backup and arch backup end times of source(MDMPRD) and decide this time as needed
+--modify DB Home path as needed
+
+ 
+connect target sys/PWD@mdmprd
+connect auxiliary sys/PWD
+connect catalog USER/PWD@rcatdb_svr_rcatdb
+
+
+run {
+allocate auxiliary channel ch1 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+allocate auxiliary channel ch2 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+allocate auxiliary channel ch3 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+allocate auxiliary channel ch4 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+allocate auxiliary channel ch5 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+allocate auxiliary channel ch6 type 'sbt_tape' parms 'BLKSIZE=1048576,SBT_LIBRARY=/opt/oracle/product/191500/lib/libddobk.so,ENV=(STORAGE_UNIT=NA_DRP_RMAN-ora_gold,
+BACKUP_HOST=rsusbf-datadomain1,RMAN_AGENT_HOME=/opt/oracle/product/191500/ddboost,ORACLE_HOME=/opt/oracle/product/191500)';
+send 'set username ddboost password PWD servername rsusbf-datadomain1 storageunit NA_DRP_RMAN-ora_gold';
+set until time '02/20/2023 00:59:00';
+duplicate target database to mdmstg;
+}
+exit;
+
+
+4) Rman duplicate
+
+setenv ora mdmstg
+
+export NLS_DATE_FORMAT="MM/DD/YYYY HH24:MI:SS"
+nohup rman cmdfile=/u00/ora/files/mdmstg/rman_dup_mdmstg.rman > /u00/ora/files/mdmstg/rman_dup_mdmstg.log 2>&1 &
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Mon Feb 20 04:49:47 2023
+Finished Duplicate Db at 02/20/2023 05:36:09
+
+
+Check RESTORE_PIT from the DB
+
+set pages 100
+set lines 300
+col RESETLOGS_CHANGE# for 9999999999999999
+select open_mode,name,RESETLOGS_TIME,RESETLOGS_CHANGE#,SCN_TO_TIMESTAMP(RESETLOGS_CHANGE#) RESTORE_PIT from v$database;
+
+OPEN_MODE            NAME      RESETLOGS_TIME      RESETLOGS_CHANGE# RESTORE_PIT
+-------------------- --------- ------------------- ----------------- ---------------------------------------------------------------------------
+READ WRITE           MDMSTG    02/20/2023 05:35:56    17143966122629 20-FEB-23 12.57.28.000000000 AM
+
+5) Drop users that needed to be imported back from backup taken prior to restore
+
+D:\pkancherla\MDM Refreshes\drop_user_mdmstg.sql
+
+5) Restore saved schemas from backup taken prior ro restore, if needed
+
+create tablespace MI_SI_REFRESH_DATA datafile '/mdmstg_2/oradata/mdmstg/mi_si_refresh_data01.dbf' size 100m autoextend on maxsize unlimited;
+create tablespace DBA_SECURITY_DATA datafile '/mdmstg_3/oradata/mdmstg/dba_security_data01.dbf' size  100m autoextend on maxsize unlimited;
+create tablespace UIPS_DATA datafile '/mdmstg_4/oradata/mdmstg/uips_data01.dbf' size 100m autoextend on maxsize unlimited;
+
+CREATE OR REPLACE DIRECTORY DATA_PUMP_ORABACK_DIR AS '/oraback/exp/mdmstg';
+
+/u00/ora/prod/impdp_mdmstg_before_refresh.par
+
+userid="/ as sysdba"
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=expdp_mdmstg_before_refresh_%U.dmp
+LOGFILE=impdp_mdmstg_to_before_refresh.log
+PARALLEL=4
+REMAP_TABLESPACE=TEMP2:TEMP1,TEMP:TEMP1
+
+nohup impdp parfile=/u00/ora/prod/impdp_mdmstg_before_refresh.par > /u00/ora/prod/impdp_mdmstg_before_refresh.out &
+
+
+Job "SYS"."SYS_IMPORT_FULL_01" completed with 9 error(s) at Tue Dec 27 04:34:53 2022 elapsed 0 00:38:03
+
+ORA-39171: Job is experiencing a resumable wait.
+
+alter database datafile '/mdmstg_1/oradata/mdmstg/infa_data01.dbf' autoextend on maxsize 800m;
+
+
+6) execute to reset passwords:
+D:\pkancherla\Work\MDM Refreshes\#MDM_PasswordUpdatesAfterMDMTESTRefresh.sql
+
+crosscheck passwords - check from MSAPROD if needded
+
+SELECT instance_name, 
+schema_name, 
+dba_control.dba_pw_management_pkg.retrieve_entry (instance_name, schema_name) password,
+last_update_date, last_updated_by, last_updated_by_os_user 
+FROM dba_control.sdx_oracle_pw
+WHERE instance_name like '%MDMSTG%'
+and schema_name in ('MDM_OPERATOR','MDM_ETL_STAGE','AVOS','CMX_ORS','CMX_SYSTEM');
+
+
+7) rman register mdmstg
+
+cd /u00/ora/prod/Oracle19C_upgrade_scripts/
+/u00/ora/prod/Oracle19C_upgrade_scripts/run_listL6_Oracle19C_rman_register_database_new_db.ksh
+
+8) Issue below grants through sqlplus / as sysdba
+
+-- 4 System Privileges for DB_SECURITY_CONTROL 
+GRANT CREATE ANY SYNONYM TO DB_SECURITY_CONTROL;
+GRANT CREATE ROLE TO DB_SECURITY_CONTROL;
+GRANT GRANT ANY OBJECT PRIVILEGE TO DB_SECURITY_CONTROL;
+GRANT UNLIMITED TABLESPACE TO DB_SECURITY_CONTROL;
+
+-- 6 Object Privileges for DB_SECURITY_CONTROL 
+GRANT SELECT ON SYS.DBA_OBJECTS TO DB_SECURITY_CONTROL;
+GRANT SELECT ON SYS.DBA_ROLES TO DB_SECURITY_CONTROL;
+GRANT SELECT ON SYS.DBA_ROLE_PRIVS TO DB_SECURITY_CONTROL;
+GRANT SELECT ON SYS.DBA_SYNONYMS TO DB_SECURITY_CONTROL;
+GRANT SELECT ON SYS.DBA_TAB_PRIVS TO DB_SECURITY_CONTROL;
+GRANT SELECT ON SYS.DBA_USERS TO DB_SECURITY_CONTROL;
+
