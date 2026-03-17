@@ -1,0 +1,106 @@
+
+
+ORACLE_SID=DBNAME1
+ORACLE_HOME=/optware/oracle/11.2.0.4.oct2016/db_2
+export ORACLE_HOME=/optware/oracle/11.2.0.4.oct2016/db_2
+export ORACLE_SID=DBNAME1
+export LD_LIBRARY_PATH=/optware/oracle/11.2.0.4.oct2016/db_2/lib
+export PATH=/optware/oracle/11.2.0.4.oct2016/db_2/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:.
+
+
+/optware/oracle/11.2.0.4.oct2016/db_2/bin/rman @/tmp/standby_create_DBNAME1.cmd
+
+
+/tmp/standby_create_DBNAME1.cmd
+
+connect target sys/***@DBNAME1
+connect auxiliary sys/***@SBDBNAME1
+run { 
+allocate channel c1 type disk;
+allocate auxiliary channel t1 type disk;
+allocate channel c2 type disk;
+allocate auxiliary channel t2 type disk;
+duplicate target database for standby from active database dorecover spfile
+set db_unique_name='DBNAME1' 
+set cluster_database='false' 
+set fal_server='SBDBNAME1' 
+set fal_client='DBNAME1' 
+set standby_file_management='AUTO' 
+set log_archive_config='dg_config=(SBDBNAME1,DBNAME1)' 
+set log_archive_dest_1='LOCATION=+DATA_DBNAME1 VALID_FOR=(ALL_LOGFILES,ALL_ROLES)' 
+set log_archive_dest_2='service=SBDBNAME1 ARCH valid_for=(ONLINE_LOGFILE,PRIMARY_ROLE) db_unique_name=SBDBNAME1' 
+set remote_listener='oraasmwp12-scan.nam.nsroot.net:8888' 
+set local_listener='(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=144.215.190.90)(PORT=1567))(ADDRESS=(PROTOCOL=TCP)(HOST=144.215.190.90)(PORT=1568)))' 
+nofilenamecheck; 
+}
+
+
+
+/optware/oracle/11.2.0.4.oct2016/db_2/bin/srvctl add database -d DBNAME1 -o /optware/oracle/11.2.0.4.oct2016/db_2 -p "+DATA_DBNAME1/DBNAME1/spfileDBNAME1.ora" -c SINGLE -i DBNAME1 -r physical_standby -s open -n DBNAME1 -x oraas-mw-p12-01
+
+#/optware/oracle/11.2.0.4.oct2016/db_2/bin/srvctl add database -d DBNAME1 -o /optware/oracle/11.2.0.4.oct2016/db_2 -p "+DATA_DBNAME1/DBNAME1/spfileDBNAME1.ora" -c SINGLE -i DBNAME1 -r physical_standby -s mount -n DBNAME1 -x oraas-mw-p12-01
+
+shutdown immediate
+
+/optware/oracle/11.2.0.4.oct2016/db_2/bin/srvctl modify database -d DBNAME1 -s open
+#/optware/oracle/11.2.0.4.oct2016/db_2/bin/srvctl modify database -d DBNAME1 -s mount
+/optware/oracle/11.2.0.4.oct2016/db_2/bin/srvctl start database -d DBNAME1 -o mount
+
+
+
+------------------------------------
+Citi-RaaS-Provision Oracle Data Guard-Create-Restore-Script-Secondary-v3
+
+
+ORACLE_SID=USFPPP1
+ORACLE_HOME=/optware/oracle/11.2.0.4.apr2017/db_1
+export ORACLE_HOME=/optware/oracle/11.2.0.4.apr2017/db_1
+export ORACLE_SID=USFPPP1
+export LD_LIBRARY_PATH=/optware/oracle/11.2.0.4.apr2017/db_1/lib
+export PATH=/optware/oracle/11.2.0.4.apr2017/db_1/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:.
+/optware/oracle/11.2.0.4.apr2017/db_1/bin/rman @/tmp/standby_create_SBDBNAME2.cmd
+
+
+/tmp/standby_create_SBDBNAME2.cmd
+
+connect target sys/***@USFPPP1
+connect auxiliary sys/***@SBDBNAME21
+run { 
+allocate channel c1 type disk;
+allocate auxiliary channel t1 type disk;
+allocate channel c2 type disk;
+allocate auxiliary channel t2 type disk;
+duplicate target database for standby from active database dorecover spfile
+set db_unique_name='SBDBNAME2' 
+set cluster_database='false' 
+set fal_server='USFPPP' 
+set fal_client='SBDBNAME2' 
+set standby_file_management='AUTO' 
+set log_archive_config='dg_config=(USFPPP,SBDBNAME2)' 
+set log_archive_dest_1='LOCATION=+DATA_USFPPP VALID_FOR=(ALL_LOGFILES,ALL_ROLES)' 
+set log_archive_dest_2='service=USFPPP ARCH valid_for=(ONLINE_LOGFILE,PRIMARY_ROLE) db_unique_name=USFPPP' 
+set remote_listener='oraasswp15-scan.nam.nsroot.net:8888' 
+set local_listener='(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=169.177.215.226)(PORT=1567))(ADDRESS=(PROTOCOL=TCP)(HOST=169.177.215.226)(PORT=1568)))' 
+nofilenamecheck; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

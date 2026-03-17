@@ -1,0 +1,1177 @@
+/usr/bin/find /acfsDDUMPS/BACKUPS/DBBACKUPS/*/* -type f -mtime +7  -exec rm -f {} \;
+
+
+/usr/bin/find /acfsDDUMPS/BACKUPS/DBBACKUPS/*/* -type f -mtime +7  -exec ls -lrt {} \;
+
+
+ORACLE SUPPORT DOCS
+--------------------
+
+clusterware
+
+How to Modify Private Network Information in Oracle Clusterware (Doc ID 283684.1)
+
+
+ASM	 
+How to Mount or Unmount ACFS File System While Applying GI Patches? (Doc ID 1494652.1)
+
+How To Resize An ACFS Filesystem/ASM Volume (ADVM) (Doc ID 1173978.1)
+
+/sbin/acfsutil size 4800G /acfsDDUMPS 
+
+
+Undo
+IF: Automatic Tuning of Undo Retention and Its Impact on the Undo Space (Doc ID 1951691.1)
+https://docs.oracle.com/cd/B28359_01/server.111/b28310/undo002.htm#ADMIN10180
+Undo Remains Unexpired When Using Non-autoextensible Datafiles For The Undo Tablespace (Doc ID 1112431.1)
+Automatic Tuning of Undo Retention Common Issues (Doc ID 1579779.1)
+
+Data Guard
+Rolling a Standby Forward using an RMAN Incremental Backup To Fix The Nologging Changes (Doc ID 958181.1)
+Information Center: Patching and Maintaining Oracle Data Guard Physical Standby Database (Doc ID 1421814.2)
+Oracle Patch Assurance - Data Guard Standby-First Patch Apply (Doc ID 1265700.1)
+How do you apply a Patchset,PSU or CPU in a Data Guard Physical Standby configuration (Doc ID 278641.1)		
+
+
+Misc
+Applying the DSTv18 update for the Oracle Database (Doc ID 1448706.1)
+Complying with Daylight Saving Time (DST) and Time Zone Rule Changes in E-Business Suite 12 (Doc ID 563019.1)
+* RAC: How to move a datafile that was added by mistake on local storage to shared location ( Doc ID 1678747.1 ) 
+* How to Move a Datafile from Filesystem to ASM Using ASMCMD CP Command. ( Doc ID 1610615.1 ) 
+How to Copy asm files between remote ASM instances using ASMCMD command (Doc ID 785580.1)
+11G - Reduce Transportable Tablespace Downtime using Cross Platform Incremental Backup (Doc ID 1389592.1)
+Script to Collect Data Guard Primary Site Diagnostic Information for Version 10g and above (Including RAC). ( Doc ID 1577401.1 ) (<=== if using RAC - run it from node1 of primary) 
+Script to Collect Data Guard Physical and Active Standby Diagnostic Information for Version 10g and above (Including RAC) ( Doc ID 1577406.1 ) (<== if using RAC - run it from node1 of standby) 
+How to Check and Enable/Disable Oracle Binary Options (Doc ID 948061.1)
+Information Lifecycle Management (ILM), Heat Map, Automatic Data Optimization (ADO) (Doc ID 1612385.1)
+Release Update Introduction and FAQ (Doc ID 2285040.1)
+SRDC - Job Execution and Related Errors: Checklist of Evidence to Supply (Doc ID 2077183.1)
+
+
+Space
+How to Resolve ORA-03297 When Resizing a Datafile by Finding the Table Highwatermark (Doc ID 130866.1)
+How To Reclaim Wasted Space on The Segment (Table, Index and LOB) and Tablespace Levels (Doc ID 1682748.1)
+
+Redo
+How to identify the causes of High Redo Generation (Doc ID 2265722.1)
+How to Find Sessions Generating Lots of Redo or Archive logs (Doc ID 167492.1)
+How To Determine The Cause Of Lots Of Redo Generation Using LogMiner (Doc ID 300395.1)
+Troubleshooting High Redo Generation Issues (Doc ID 782935.1)
+
+
+Tuning
+SQL Tuning Health-Check Script (SQLHC) (Doc ID 1366133.1)
+Document 749227.1 How to Gather Optimizer Statistics on 11g , Document 44961.1 Statistics Gathering: Frequency and Strategy Guidelines 
+Restoring Table Statistics ( Doc ID 452011.1 ) 
+How to Transfer Statistics from one Database to Another ( Doc ID 333742.1 ) 
+Statistics Best Practices: How to Backup and Restore Statistics ( Doc ID 464939.1 )
+How to Use DBMS_STATS to Move Statistics to a Different Database ( Doc ID 117203.1 )	 
+Restoring Table Statistics ( Doc ID 452011.1 ) 
+SQLT Diagnostic Tool ( Doc ID 215187.1 ) 
+
+
+
+Characterset conversion
+Csscan Output Explained (Doc ID 444701.1)
+Changing the NLS_CHARACTERSET to AL32UTF8 / UTF8 (Unicode) in 8i, 9i , 10g and 11g (Doc ID 260192.1)
+csscan fromchar=WE8DEC tochar=AL32UTF8 full=y log=dbcheck capture=n array=10000000 process=2
+Changing Primary Database Character Set without Recreating Data Guard Physical Standbys (Doc ID 1124165.1)
+Solving Convertible or Lossy data in Data Dictionary objects reported by Csscan when changing the NLS_CHARACTERSET (Doc ID 258904.1) 
+DBMS_WORKLOAD_REPOSITORY.DROP_SNAPSHOT_RANGE Is Not Removing All Snapshots Data (Doc ID 1218543.1) 
+How to Recreate The AWR ( AUTOMATIC WORKLOAD ) Repository ? (Doc ID 782974.1) 
+11g: Scheduler Maintenance Tasks or Autotasks (Doc ID 756734.1) 
+Running Csalter.Plb Gives Unrecognized Convertible Data Found In Scanner Result (Doc ID 335147.1) 
+Note 258904.1 Convertible data in data dictionary: Workarounds when changing character set is a good place to start.
+Script: To report Table Constraints (Doc ID 1019930.6)
+
+NLS_LANG
+
+NLS_LANG Explained (How does Client-Server Character Conversion Work?) (Doc ID 158577.1)
+The Priority of NLS Parameters Explained (Where To Define NLS Parameters) (Doc ID 241047.1)
+The Correct NLS_LANG Setting in Unix Environments (Doc ID 264157.1)
+
+Memory
+
+HugePages on Linux: What It Is... and What It Is Not... (Doc ID 361323.1)
+ASMM versus AMM and LINUX x86-64 Hugepages Support (Doc ID 1134002.1)
+HugePages and Oracle Database 11g Automatic Memory Management (AMM) on Linux (Doc ID 749851.1)
+USE_LARGE_PAGES To Enable HugePages (Doc ID 1392497.1)
+
+TAF
+
+How To Configure Server Side Transparent Application Failover (Doc ID 460982.1)
+Understanding Transparent Application Failover (TAF) and Fast Connection Failover (FCF) (Doc ID 334471.1)
+https://www.programering.com/a/MDNxYjMwATY.html
+11.2 TAF  https://docs.oracle.com/cd/E11882_01/network.112/e41945/advcfg.htm#NETAG455
+12.2 TAF https://docs.oracle.com/en/database/oracle/oracle-database/12.2/netag/enabling-advanced-features.html#GUID-8F532535-C401-4B51-BE0B-04FD74BB0621
+
+TAF is feature of OCI (Oracle Call Interface). It cannot used be with thin driver
+
+
+ASM
+
+How To Resize An ACFS Filesystem/ASM Volume (ADVM) (Doc ID 1173978.1)
+ACFSUTIL resize operation fails with "ACFS-03006: smallest size" (Doc ID 1597710.1)
+How to remove a no longer needed 11.2 ADVM Volume and ACFS File System (Doc ID 1948833.1)
+
+OEM
+
+EM 12c, EM 13c: How to monitor CPU Waits Using Instance Caging in Enterprise Manager 12c Cloud Control (Doc ID 2286927.1)
+
+OCI PDB
+
+
+OCI PDB ORA-01035: ORACLE only available to users with RESTRICTED SESSION due to Sync Failure ERROR "Sync PDB failed with ORA-65177 during 'alter user' in pdb_plug_in_violations (Doc ID 2503982.1)	
+ORA-65144 When Attempt To Disable Restricted Session Of A Pluggable Database (Doc ID 2308838.1)	
+PDB_PLUG_IN_VIOLATIONS Pending Actions are not Cleared Even After the Actions have been completed (Doc ID 2569782.1)	
+https://connor-mcdonald.com/2014/04/12/pluggable-database-and-restricted-sessions/
+ 
+****************************************************************
+ipcs - provide information on IPC facilities
+
+s --> semaphores
+q --> queues
+m --> shared mem segments
+
+u --> summary
+l --> limits
+ 
+ipcs -sl shows semaphore limits
+ipcs -su shows semaphore usage summary
+
+ipcs -sl
+
+------ Semaphore Limits --------
+max number of arrays = 200
+max semaphores per array = 250
+max semaphores system wide = 32000
+max ops per semop call = 100
+semaphore max value = 32767
+
+
+ipcs -su
+
+------ Semaphore Status --------
+used arrays = 149
+allocated semaphores = 29447
+
+so 29447 out of 32000 are used
+
+*******************************************************************
+Historical load profile, cpu and memory usage using sar command
+
+past utilization in LINUX
+
+
+https://www.hostdime.com/blog/sar-command-linux-server-load/
+https://www.geeksforgeeks.org/sar-command-linux-monitor-system-performance/
+
+Report queue length and load averages.
+
+
+
+sar -q
+
+“runq-sz” is the run queue length, which is the number of tasks waiting for run time.
+“plist-sz” is the number of tasks in the task list.
+“1davg-1” refers to the system load average over the last minute. The load average is calculated as the average number of runnable or running tasks (R state), and the number of tasks in uninterrupted sleep (D state) over the specified interval.
+“ldavg-5” is the system load average for the past 5 minutes.
+“ldavg-15” is, yup you guessed it, the system load average for the past 15 minutes.
+
+Report memory utilization statistics.
+
+sar -r
+
+“kbmemfree” is the amount of free memory available in kilobytes.
+“kbmemused is the amount of used memory in kilobytes, which does not take into account memory used by the kernel itself.
+“%memused” is the percentage of used memory.
+“kbbuffers” is the amount of memory used as buffers by the kernel in kilobytes.
+“kbcached” is the amount of memory used to cache data by the kernel in kilobytes.
+“kbcommit” is the amount of memory needed for the current workload in kilobytes. This is an estimate for how much RAM/swap is needed to make sure there is enough memory.
+“%commit” is the percentage of memory needed for current workload related to the total amount of RAM + swap (equals memory). This percantage may be greater than 100 percent because the kernel usually over-commits memory.
+
+Report CPU utilization
+
+sar -u
+
+“%user” is the percentage of CPU utilization that occurred while executing at the user level (application). This field includes time spent running virtual processors.
+“%usr” is the percentage of CPU utilization that occurred while executing at the user level (application). This field does NOT include time spent running virtual processors.
+“%nice” is the percentage of CPU utilization that occurred while executing at the user level with nice priority.
+“%system” is the percentage of CPU utilization that occurred while executing at the system level (kernel). This field includes time spent servicing hardware and software interrupts.
+“%sys” is the percentage of CPU utilization that occurred while executing at the system level (kernel). Note that this field does
+NOT include time spent servicing hardware or software interrupts.
+“%iowait” is the percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+“%steal” is the percantage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another
+virtual processor.
+“%irq” is the percentage of time spent by the CPU or CPUs to service hardware interrupts.
+“%soft” is the percentage of time spent by the CPU or CPUs to service software interrupts.
+“%guest” is the percentage of time spent by the CPU or CPUs to run a virtual processor.
+“%idle”
+
+
+sar (past cpu stats)
+sar -r (past memory stats)
+
+stats for older days
+
+cd /var/log/sa (linux)
+cd /var/adm/sa (AIX)
+
+sar -f sa12
+sar -u -f sa12 --> cpu
+sar -r -f sa12 --> memory
+
+******************************************************************************
+
+AIX  memory usage - nmon
+
+https://www.ibm.com/support/pages/aix-memory-usage-or-who-using-memory-and-how
+
+If you use nmon then "t" for top processes and then "4" to order in process size you see the process memory:
+
+for memory
+nmon - m - t - 4
+
+past utilization in AIX
+
+https://www.thegeekdiary.com/memory-utilization-of-processes-in-aix/
+
+
+
+*********************************************************************************
+https://www.howtogeek.com/668986/how-to-use-the-linux-top-command-and-understand-its-output/
+
+top command outpout
+
+Shift + P: sort according to CPU utilization
+
+Shift + M: sort by memory usage
+
+Shift + T: sort by Time column
+
+Shift + N: sort by PID number
+
+Shift + F ro enter interactive mode
+
+   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,
+   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!
+
+
+top -b -o +%MEM | head -n 30
+
+top -b -o +%CPU | head -n 30
+
+
+*********************************************************************
+-- How to find memory info on Linux Server
+
+
+cat /proc/meminfo
+
+free -m (in MB)
+free -g (in GB)
+
+-- sort processes by memory - top 30
+
+ps -eo pid,cmd,%mem,%cpu --sort=-%mem |head -30
+ps -eo pid,comm,%mem,%cpu --sort=-%mem |head -30
+
+
+ps aux | awk '{print $2, $4, $11}' | sort -k2rn | head -n 10
+
+
+-- sort processes by cpu - top 30
+
+ps -eo pid,cmd,%mem,%cpu --sort=-%cpu |head -30
+ps -eo pid,comm,%mem,%cpu --sort=-%cpu |head -30
+
+--
+ps -eo pcpu,pid,user,args --no-headers| sort -t. -nk1,2 -k4,4 -r |head -n 5
+
+--to know env of a ps 
+
+ps -ef|grep rman
+ps -ef|grep dsmc
+
+--on aix
+ps eww <pid>
+ps eww <processid> | tr ' ' '\n' | grep = | sort (from https://www.ibm.com/support/pages/verification-environment-settings-running-process-under-aix )
+
+ps eww 20120084
+
+ps eww 20120084 | tr ' ' '\n' | grep = | sort
+ps eww 23462552 | tr ' ' '\n' | grep = | sort
+
+--on linux
+
+cat /proc/1662/environ | tr '\0' '\n'
+
+
+pstree -apgs 374136 
+  -a, --arguments     show command line arguments
+  -A, --ascii         use ASCII line drawing characters
+  -c, --compact       don't compact identical subtrees
+  -h, --highlight-all highlight current process and its ancestors
+  -H PID,
+  --highlight-pid=PID highlight this process and its ancestors
+  -g, --show-pgids    show process group ids; implies -c
+  -G, --vt100         use VT100 line drawing characters
+  -l, --long          don't truncate long lines
+  -n, --numeric-sort  sort output by PID
+  -N type,
+  --ns-sort=type      sort by namespace type (ipc, mnt, net, pid, user, uts)
+  -p, --show-pids     show PIDs; implies -c
+  -s, --show-parents  show parents of the selected process
+  -S, --ns-changes    show namespace transitions
+  -u, --uid-changes   show uid transitions
+  -U, --unicode       use UTF-8 (Unicode) line drawing characters
+  -V, --version       display version information
+  -Z,
+  --security-context   show SELinux security contexts
+
+--memory used by Oracle process on the server
+http://www.usn-it.de/index.php/2014/01/08/oracle-on-aix-how-to-find-out-the-process-memory-usage/
+
+for X in $(ps -ef | egrep " oracle* | ora_.*_* " | grep -v egrep | awk '{print $2}'); do ps v $X | grep ora | awk '{print $6}'; done | awk '{sizesum += $1} END {print sizesum/1024/1024}'
+
+for X in $(ps -ef | egrep "LOCAL" | grep -v egrep | awk '{print $2}'); do ps v $X | grep ora | awk '{print $6}'; done | awk '{sizesum += $1} END {print sizesum/1024/1024}'
+
+--TSM client commands
+
+https://docs.gz.ro/tsm-client-commands.html
+
+dsmc q b -subdir=yes -inactive "/oracle_backup/rcat12/*"
+
+dsmc incremental /oracle_backup/rcat12/
+
+dsmc q arch /oracle_backup/rcat12/
+
+
+dsmc backup "/etc/oratab"
+dsmc backup "/etc/oratab" -traceflags=service,verbdetail -tracefile=/u00/ora/files/tsmtrace.out -tracemax=2500 -tracesegsize=200
+
+-- vmstat
+The vmstat command can display memory statistics including additional information 
+about processes, paging, block IO, traps, and cpu activity. Type the following command:
+
+vmstat -s
+
+
+*********************************************************************************
+on aix
+
+https://www.ibm.com/docs/en/aix/7.2?topic=command-memory-usage-by-processes
+
+*********************************************************************************
+
+--HugePages
+
+$ grep Huge /proc/meminfo
+AnonHugePages:         0 kB
+HugePages_Total:   30720
+HugePages_Free:      146
+HugePages_Rsvd:      146
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+
+Used pages = (HugePages_Total - HugePages_Free + HugePages_Rsvd) * Hugepagesize
+Free pages = (HugePages_Free - HugePages_Rsvd) * Hugepagesize
+
+
+shmmax
+Defines the maximum size (in bytes) of a single shared memory segment allowed by the kernel. 
+
+Citi Standard: kernel.shmmax   RAM in Bytes / 2
+
+
+Oracle scope : should be more than SGA of instance, if more than one instance, this should be more than the SGA of instance having highest SGA
+
+shmmni
+Defines the system-wide maximum number of shared memory segments. The default value is 4096 on all systems.
+
+
+shmall
+Defines the total amount of shared memory pages that can be used on the system at one time. A page is 4096 bytes on the AMD64 and Intel 64 architecture.
+
+total memory/page size(4096 on most systems)
+
+Citi Standard: kernel.shmall   RAM in Bytes / PAGE_SIZE 
+
+
+--master node in cluster
+oclumon manage -get MASTER
+ 
+select *from gv$ges_resource;
+
+ocrconfig -manualbackup (backup will happen on master node)
+
+scanning cssd and crsd logs
+
+What DataPump And Oracle RDBMS Parameters Can Significantly Affect DataPump Performance ? (Doc ID 1611373.1)
+Links
+*****
+
+Transportable tablespaces
+
+https://docs.oracle.com/cd/B19306_01/backup.102/b14191/ontbltrn.htm#CACIGHFE
+https://docs.oracle.com/cd/B28359_01/server.111/b28310/tspaces013.htm#ADMIN11394
+https://oracle-base.com/articles/misc/transportable-tablespaces
+
+Cross platform
+
+
+http://remidian.com/2012/07/transporting-an-oracle-database-to-another-os-platform-the-fastest-way/
+http://www.dba-oracle.com/art_dbazine_ault_cross_plat.htm
+https://prutser.wordpress.com/2015/01/04/cross-platform-transportable-tablespaces-made-easy/
+https://docs.oracle.com/cd/B19306_01/backup.102/b14191/dbxptrn.htm#CHDHHHCI
+
+http://ewiki.nam.nsroot.net/wiki/Oracle_Database_Migration_with_XTTS_into_OraaS
+
+
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/SGA_TARGET.html
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/SGA_MAX_SIZE.html
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/PGA_AGGREGATE_TARGET.html
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/PGA_AGGREGATE_LIMIT.html
+
+
+lmwcrmmadb2p/GTSBIP issue with system stats
+
+Production: 
+~~~~~~~~~~ 
+Current System Statistics 
+# Name Value 
+1 CPUSPEEDNW 2721.31147540984 
+2 IOSEEKTIM 10 
+3 IOTFRSPEED 4096 
+4 CPUSPEED 2716 
+5 MBRC 32 
+6 SREADTIM .139>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0.139 in production VS 2.762 in UAT 
+7 MREADTIM 19.205 
+8 MAXTHR 325103616 
+9 SLAVETHR 4983808 
+
+UAT: 
+~~~~~~~ 
+Current System Statistics 
+# Name Value 
+1 CPUSPEEDNW 2701.27857419605 
+2 IOSEEKTIM 10 
+3 IOTFRSPEED 4096 
+4 CPUSPEED 2662 
+5 MBRC 
+6 SREADTIM 2.762 
+7 MREADTIM 11.324 
+8 MAXTHR 
+9 SLAVETHR 
+
+Could you please take backup of System Statistics in UAT, Export System Stats from Prod to UAT, Import in UAT 
+
+1. -- Create stats storage table 
+exec dbms_stats.create_stat_table(user,'STAT_TIMESTAMP'); 
+
+2. -- Export System Statistics: 
+exec dbms_stats.export_system_stats('STAT_TIMESTAMP'); 
+
+3. Export the STATS table using export(exp) or datapump(expdp) 
+exp system/manager tables=STAT_TIMESTAMP file=STAT_TIMESTAMP.dmp owner=<user> log=STAT_TIMESTAMP.log 
+
+4. Transfer the dump file to the destination database 
+
+5. Import the STATS table to the destination database 
+imp system/manager tables=STAT_TIMESTAMP file=stats.dmp full=Y 
+
+6. -- Import: 
+exec dbms_stats.import_system_stats('STAT_TIMESTAMP'); 
+
+Once you do this, flush the shared pool and let me know if query still takes good plan in production. 
+
+
+
+RAC Data collection
+********************
+
+$GRID_HOME/bin/crsctl stat res -t -init 
+$GRID_HOME/bin/crsctl stat res -t 
+
+as root: 
+$GI_HOME/tfa/bin/tfactl diagcollect -all -since 4h 
+
+tfactl diagcollect -all -from "Apr/01/2019 22:00" -to "Apr/02/2019 16:00:00"
+tfactl diagcollect -all -from "Apr/03/2019 00:00" -to "Apr/03/2019 14:00:00"
+
+--Import through network
+
+declare 
+ h1   NUMBER; 
+begin 
+    h1 := dbms_datapump.open (operation => 'IMPORT', job_mode => 'FULL', remote_link => 'ORAAS_IMPORT', job_name => 'AIRSD3_IMPORT', version => 'COMPATIBLE');  
+   dbms_datapump.set_parallel(handle => h1, degree =>4); 
+   dbms_datapump.add_file(handle => h1, filename => 'IMPORT_AIRSDD_11Apr17.LOG', directory => 'DATA_PUMP_LOG_DIR', filetype => 3); 
+   dbms_datapump.set_parameter(handle => h1, name => 'KEEP_MASTER', value => 0); 
+   dbms_datapump.set_parameter(handle => h1, name => 'ESTIMATE', value => 'BLOCKS'); 
+   dbms_datapump.set_parameter(handle => h1, name => 'INCLUDE_METADATA', value => 1); 
+   dbms_datapump.set_parameter(handle => h1, name => 'REUSE_DATAFILES', value => 1); 
+   dbms_datapump.set_parameter(handle => h1, name => 'SKIP_UNUSABLE_INDEXES', value => 0); 
+   dbms_datapump.set_parameter(handle => h1, name => 'TABLE_EXISTS_ACTION', value => 'REPLACE'); 
+   dbms_datapump.set_parameter(handle => h1, name => 'FLASHBACK_SCN', value => 11060707994184); 
+   dbms_datapump.metadata_filter( handle => h1, name   => 'NAME_EXPR',  value  => q'|NOT IN ('ANONYMOUS','APPQOSSYS','DBSNMP','DDL_AUTOINSTALL','DIP','ORACLE_OCM','OUTLN','PERFSTAT','SYS','SYSMAN','SYSTEM','TSMSYS','WMSYS')|',object_path=> 'SCHEMA');
+   dbms_datapump.start_job(handle => h1, skip_current => 0, abort_step => 0); 
+   dbms_datapump.detach(handle => h1); 
+end; 
+/
+
+----------
+
+
+[NLS_LANGUAGE]_[NLS_TERRITORY].[NLS_CHARACTERSET]. 
+
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8 
+exp file=testexp.dmp log=testexp.log full=y rows=n statistics=none 
+
+
+To get user and grant DDL using impdp
+*************************************
+
+expdp dumpfile=DBNAME.dmp logfile=DBNAME.log directory=EXPORT_DIR  full=y content=metadata_only
+
+impdp dumpfile=DBNAME.dmp  logfile=DBNAME_users_sqlfile.log directory=EXPORT_DIR full=y include=user,role_grant,system_grant,object_grant sqlfile=create_user.sql
+
+
+example:
+
+expdp dumpfile=IDMD2_users.dmp logfile=IDMD2_users.log directory=EXPORT_IDMD2  full=y content=metadata_only
+
+
+impdp dumpfile=IDMD2_users.dmp logfile=IDMD2_users_sqlfile.log directory=EXPORT_IDMD2 full=y include=user,role_grant,system_grant,object_grant sqlfile=create_user.sql
+
+
+----
+
+RAC Rolling Install Process for the "Oracle JavaVM Component Database PSU" (OJVM PSU) Patches (Doc ID 2217053.1)
+
+1.1.1 - Standard Rolling Procedure for database 11.2.0.4
+*********************************************************
+
+Repeat the following steps for each RAC instance allowing time to drain work before stopping an instance.
+The view V$SESSION, run against each instance as the service is stopped, can be used to verify that sessions are draining to another instance.
+
+Stop service (no –force)
+
+	srvctl stop service -d <database_name> -s <service name> -i <instance name>
+
+or Relocate services (no –force)
+
+	srvctl relocate service -d <database_name> -service <service name> -i <instance name> -t <instance name>
+
+Wait for sessions and transactions to drain. For remaining sessions, stop transactional:
+
+	exec dbms_service.disconnect_session( '… your service ..', DBMS_SERVICE.POST_TRANSACTION);
+
+Stop the instance using your preferred tool (optionally disable)
+
+	srvctl stop instance -d <database_name> -i <instance name>
+
+If out of place patching conducted switch instance to new database home
+
+	srvctl modify database -d <database_name> -o <new oracle home>
+
+Now start instance
+
+	srvctl start instance -d <database_name> -i <instance name>
+
+If instance starts correctly restart the services
+
+	srvctl start service -d <database_name> -i <instance name> -s <service name>
+
+
+1.1.2 - Standard Rolling Procedure for database 12.1.0.2 and beyond
+Repeat the following steps for each RAC instance allowing time to drain work before stopping an instance.
+The view V$SESSION, run against each instance as the service is stopped, can be used to verify that sessions are draining to another instance.
+
+Stop service (no –force)
+
+	srvctl stop service –db <database name> -service <service name> –instance <instance name>
+
+or Relocate services (no –force)
+
+	srvctl relocate service –db <database name> -service <service name> –oldinst <instance name> –newinst <instance name>
+
+Wait for sessions and transactions to drain. For remaining sessions, stop transactional:
+
+	exec dbms_service.disconnect_session( '… your service ..', DBMS_SERVICE.POST_TRANSACTION);
+
+Stop the instance using your preferred tool (optionally disable)
+
+	srvctl stop instance –d <database name> -instance <instance name>
+
+If out of place patching conducted switch instance to new database home
+
+	srvctl modify database –d <database name> -oraclehome <new oracle home>
+
+Now start instance
+
+	srvctl start instance –database <database name> -instance <instance name>
+
+If instance starts correctly restart the services
+
+	srvctl start service –db <database name> –instance <instance name> -service <service name>
+	
+SQLNET timeouts
+
+https://docs.oracle.com/cd/B28359_01/network.111/b28317/sqlnet.htm#NETRF209
+
+
+Oracle Grid Infrastructure 11.2.0.4.x Patch Set Update SUPPLEMENTAL README (Doc ID 1641136.1)
+RAC Database Service With Physical Standby Role Option In 11gR2 – New Feature (Doc ID 1129143.1)
+
+
+--------
+--Command to know Kernel IP routing table and subnet IDs
+
+netstat -nr 
+
+-- Command to know CPUs, cores on a PC
+$ lscpu | egrep '^Thread|^Core|^Socket|^CPU\('
+CPU(s):                48
+Thread(s) per core:    2
+Core(s) per socket:    12
+Socket(s):             2
+
+lscpu | egrep '^Thread|^Core|^Socket|^CPU\('
+CPU(s):                24
+Thread(s) per core:    2
+Core(s) per socket:    6
+Socket(s):             2
+
+
+CPUs = Threads per core X cores per socket X sockets
+As Oracle doesn't take threads into consideration OCPUs =cores per socket X sockets which is 12 per node.
+
+https://blogs.oracle.com/cloud-infrastructure/post/vcpu-and-ocpu-pricing-information
+
+https://dbdev01555.wordpress.com/2022/02/22/ocpu-vcpu/#:~:text=Oracle%20defines%20an%20OCPU%20as,That%20is%20the%20technical%20definition.
+
+
+sho parameter cpu_count
+sho parameter parallel_threads_per_cpu
+
+
+ cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 7.9 (Maipo)
+
+
+uname -a
+
+cat /etc/os-release
+lsb_release -a
+hostnamectl
+uname -r
+cat /proc/version
+
+cat /proc/version
+	Linux version 4.14.35-2047.516.2.4.el7uek.x86_64 (mockbuild@build-ol7-x86_64.oracle.com) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-16.0.3) (GCC)) #2 SMP Fri Sep 23 09:48:48 PDT 2022
+
+cat /etc/os-release
+		NAME="Oracle Linux Server"
+		VERSION="7.9"
+		ID="ol"
+		ID_LIKE="fedora"
+		VARIANT="Server"
+		VARIANT_ID="server"
+		VERSION_ID="7.9"
+		PRETTY_NAME="Oracle Linux Server 7.9"
+		ANSI_COLOR="0;31"
+		CPE_NAME="cpe:/o:oracle:linux:7:9:server"
+		HOME_URL="https://linux.oracle.com/"
+		BUG_REPORT_URL="https://bugzilla.oracle.com/"
+
+		ORACLE_BUGZILLA_PRODUCT="Oracle Linux 7"
+		ORACLE_BUGZILLA_PRODUCT_VERSION=7.9
+		ORACLE_SUPPORT_PRODUCT="Oracle Linux"
+		ORACLE_SUPPORT_PRODUCT_VERSION=7.9
+
+hostnamectl
+   Static hostname: exasod-np-7jrvm2
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: e1d03c5725bd406b9c3db4b50ef4e075
+           Boot ID: 4ec514ff1fa045e78935a27d84e42452
+    Virtualization: xen
+  Operating System: Oracle Linux Server 7.9
+       CPE OS Name: cpe:/o:oracle:linux:7:9:server
+            Kernel: Linux 4.14.35-2047.516.2.4.el7uek.x86_64
+      Architecture: x86-64
+
+
+
+-to list and remove files modified more than 2 days ago
+
+find . -name "*.xml" -mtime +2 -exec ls -lrt {} \;
+
+find . -name "*.xml" -mtime +2 -exec rm -rf {} \;
+
+find . -name "*.xml" -mtime +10 -exec rm -rf {} \;
+
+find . -mtime +4 -exec ls -lrt {} \;
+find . -mtime +4 -exec rm -rf {} \;
+find . -mtime +4 -exec rm -rf {} \;
+
+find . -mtime +1 -exec rm -rf {} \;
+
+
+
+find /DDUMPS/BACKUPS/EXPPORTDUMPS/praneeth -name '*.log' -mtime +15 -exec ls -lrt {} \;
+
+
+find /DDUMPS/BACKUPS/EXPPORTDUMPS/praneeth -name '*.log' -mtime +15 -exec rm -f {} \;
+
+find . -type f |xargs ls -lrt|awk '{print $6}'
+
+
+----
+hosts file on windows
+C:\Windows\System32\drivers\etc\hosts
+
+
+cd 
+. ./.profile
+. ~oracle/.profile_ASM1
+cd /optware/oracle/script/ 
+crsctl check crs >> pre_checks.log
+crsctl stat res -t >> pre_checks.log
+srvctl config database >> pre_checks.log
+srvctl config listener >> pre_checks.log 
+srvctl status database -d CAOMISP >> pre_checks.log
+srvctl config database -d CAOMISP >> pre_checks.log 
+srvctl status service -d CAOMISP >> pre_checks.log
+srvctl config service -d CAOMISP >> pre_checks.log
+lsnrctl status listener >> pre_checks.log
+
+
+cd /optware/oracle/script
+
+
+chmod +x emctl
+
+touch dbora.trc
+
+chmod 766 dbora.trc
+
+ls -lrt /etc/init.d/dbora
+
+rm dbora
+
+--
+
+On all below servers
+
+
+Copy /optware/oracle/script/dbora02162018 as /etc/init.d/dbora 
+and keep below ownership and permissions
+-rwxr-xr-x 1 root root
+
+Once done please create below soft link on all servers
+
+ln -s /etc/init.d/dbora /etc/rc.d/rc3.d/K10dbora 
+
+------
+
+a.  # ln -s /etc/init.d/dbora /etc/rc.d/rc0.d/K01dbora
+b.  # ln -s /etc/init.d/dbora /etc/rc.d/rc3.d/S99dbora
+c.  # ln -s /etc/init.d/dbora /etc/rc.d/rc4.d/S99dbora
+d.  # ln -s /etc/init.d/dbora /etc/rc.d/rc5.d/S99dbora
+e.  # ln -s /etc/init.d/dbora /etc/rc.d/rc6.d/K10dbora 
+
+
+/etc/rc.d/rc0.d/K15ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc1.d/K15ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc2.d/K15ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc3.d/S96ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc4.d/K15ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc5.d/S96ohasd -> /etc/init.d/ohasd
+/etc/rc.d/rc6.d/K15ohasd -> /etc/init.d/ohasd  
+
+S- start - ascending order of execution - so S96ohasd will run before S99dbora which means DB services will start and then agent will start & end blackout
+K - Kill - ascending order of execution - so K10dbora will execute before K15ohasd which means agent will blackout and come down before DB services go down
+
+
+mkdir -p /optware/oracle/blackout_scripts
+mkdir -p /optware/oracle/blackout_scripts/lsnr_log/
+
+
+12c: ORA-28040 After Upgrade: No Matching Authentication Protocol (Doc ID 1957995.1)
+
+https://docs.oracle.com/database/121/NETRF/sqlnet.htm#NETRF2010
+
+
+Data Guard Physical Standby Changing the SYS password when a broker configuration exists (Doc ID 1199943.1) 
+
+Export/Import DataPump Parameter TRACE - How to Diagnose Oracle Data Pump (Doc ID 286496.1)
+Export/Import DataPump Parameters INCLUDE and EXCLUDE - How to Load and Unload Specific Objects (Doc ID 341733.1)
+
+# Set prompt
+USERID=`id | cut -d'(' -f2 | cut -d')' -f1`
+NODENAME=`uname -n`
+PWD=`pwd`
+PS1='$USERID@$NODENAME($ORACLE_SID):$PWD> '; export PS1
+
+
+--Resource Manager
+
+select * from DBA_RSRC_PLANS ;
+
+select * from V$RSRC_CONSUMER_GROUP ;
+
+select * from V$RSRCMGRMETRIC_HISTORY order by 	CPU_CONSUMED_TIME desc ;
+
+select * from DBA_RSRC_CONSUMER_GROUP;
+
+set pages 100
+set lines 300
+col PLAN for a20
+col CPU_METHOD for a15
+col status for a6
+select plan, cpu_method, status from dba_rsrc_plans order by 1;
+select * from dba_rsrc_plans order by 1;
+
+
+jdbc:oracle:thin:@//host-scan.nam.nsroot.net:8889/HADBNAME
+
+
+jdbc:oracle:thin:@//host:port/service
+
+
+jdbc:oracle:thin:user/pwd@//host-scan.nam.nsroot.net:8889/HADBNAME
+
+GOLDEN GATE
+
+SRDC - Data to Collect when GoldenGate GGSCI Command Errors For Oracle Source Database (Doc ID 1913403.1)
+http://rob.lasonder.org/index.php?title=Golden_Gate_Configuration:_how_to_handle_tables_without_Primary_or_Unique_Keys
+How to Handle Tables Without Primary Keys or Unique Indexes With Oracle GoldenGate (Doc ID 1271578.1)
+
+GoldenGate Configuration for Stability and Recovery (Doc ID 1451514.1)
+https://docs.oracle.com/goldengate/c1230/gg-winux/GGODB/using-parallel-replicat.htm#GGODB-GUID-F7764E22-D889-4272-A192-637AC68508EE
+https://www.oracle-scn.com/oracle-goldengate-parallel-replicat/
+
+How to Resync a Single Table with Minimum Impact to Other Tables' Replication? (Doc ID 966211.1)
+
+How to Configure or Relocate the GoldenGate Integrated Extract When It Abends Error code 1291, error message: ORA-01291: missing logfile (Doc ID 2003603.1)
+https://www.ateam-oracle.com/oracle-goldengate-extract-recovery-missing-archivelogs
+
+New Integrated Extract Abends Due To Missing Logfile (Doc ID 1633564.1) --This doesn't work
+
+http://oracledbabhuvan.blogspot.com/2015/02/ogg-00868-error-code-1291-error-message.html
+
+Oracle GoldenGate Best Practices: Heartbeat Table for Monitoring Lag times (Doc ID 1299679.1)
+Oracle GoldenGate Best Practices: sample parameter files (Doc ID 1321696.1)
+
+
+INTEGRATED EXTRACT Not Moving Read RBA In Recovery Mode (Doc ID 1913523.1)
+GoldenGate Integrated Capture and Integrated Replicat Healthcheck Script for Ogg v12.3.x and Above (Doc ID 2653026.1)
+
+-- Command to know 	s, cores on a PC
+$ lscpu | egrep '^Thread|^Core|^Socket|^CPU\('
+CPU(s):                48
+Thread(s) per core:    2
+Core(s) per socket:    12
+Socket(s):             2
+
+CPUs = Threads per core X cores per socket X sockets
+
+sho parameter cpu_count
+sho parameter parallel_threads_per_cpu
+
+Why are a Higher Number of CPUs Used Than the CPU_COUNT Parameter Setting (Doc ID 2017395.1)
+Example: How to control CPU Resources using the Resource Manager (Doc ID 471265.1)
+How to Provision PDBs, based on CPU_COUNT (Doc ID 2326708.1)
+
+set pages 100
+set lines 300
+col consumer_group format a20
+col cpu_method format a15
+col status format a10
+select consumer_group,cpu_method, status from dba_rsrc_consumer_groups order by 1;
+
+col plan for a25
+col GROUP_OR_SUBPLAN for a25
+select plan, group_or_subplan, type, MGMT_P1, MGMT_P2, MGMT_P3, MGMT_P4,status,MANDATORY,PARALLEL_DEGREE_LIMIT_P1,UTILIZATION_LIMIT 
+from dba_rsrc_plan_directives  
+order by 1,2,3,4,5,6;  
+
+select plan, group_or_subplan, type, cpu_p1, cpu_p2, cpu_p3, cpu_p4, status,MANDATORY,PARALLEL_DEGREE_LIMIT_P1,UTILIZATION_LIMIT 
+from dba_rsrc_plan_directives  
+order by 1,2,3,4,5,6; 
+
+select group_or_subplan, mgmt_p1, mgmt_p2, mgmt_p3, mgmt_p4, mgmt_p5, mgmt_p6, mgmt_p7, mgmt_p8, max_utilization_limit 
+from dba_rsrc_plan_directives where plan = (select name from v$rsrc_plan where is_top_plan = 'TRUE');
+
+--Monitor CPU Usage and Waits by Consumer Group
+
+select to_char(m.begin_time, 'HH:MI') time, m.consumer_group_name, m.cpu_consumed_time / 60000 avg_running_sessions, m.cpu_wait_time / 60000 avg_waiting_sessions, d.mgmt_p1*(select value from v$parameter where name = 'cpu_count')/100 allocation from v$rsrcmgrmetric_history m, dba_rsrc_plan_directives d, v$rsrc_plan p where m.consumer_group_name = d.group_or_subplan and p.name = d.plan order by m.begin_time, m.consumer_group_name;
+
+
+Scripts and Tips for Monitoring CPU Resource Manager (Doc ID 1338988.1)
+How To Identify Sessions Which Cause PL/SQL LOCK TIMER Wait Event (Doc ID 434265.1)
+CJQ Not Schedule Job When There Is Resource Manager Plan Switch Even After Applied Patch 22071881 (Doc ID 2322087.1)
+
+--EVFC errors
+
+Using SCAN With Oracle JDBC 11g Thin Driver (Doc ID 1290193.1) 
+Error: Could not find or load main class When Trying to Compile Java Program (Doc ID 2250827.1) 
+
+Equivlance cluvfy
+
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cwlin/enabling-ssh-user-equivalency-on-cluster-nodes.html#GUID-0B5EF138-1D1B-4C1D-8CAF-F2AAA266C526
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cwlin/configuring-ssh-manually-on-all-cluster-nodes.html#GUID-6147C3B4-2B41-4F2B-808F-74B2D0F39E4D
+
+/optware/grid/19.0.0.0/bin/cluvfy comp admprv -n all -o user_equiv -verbose
+
+/optware/grid/19.0.0.0/bin/cluvfy comp nodereach -n lswttsfcardb06u
+
+/optware/grid/19.0.0.0/bin/cluvfy comp nodecon -n lswttsfcardb06u
+
+alter user ifs_infosec identified by values 'S:CF5BFCA4CBD47FA2335632C28AF79FA3E38CF1BB19F3C0F67C8E8CA7D8F5;537A99589E55AEB0'; 
+
+--how to know if client is 32 bit or 64 bit
+
+1)on AIX/Linux - run file <filename> - it would show output as below
+
+file sqlplus
+sqlplus: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=531bb93083db2d729adc30302c30787a29584425, not stripped
+
+2)on windows
+
+run tnsping 
+
+TNS Ping Utility for 32-bit Windows: Version 19.0.0.0.0 - Production on 26-APR-2023 05:33:12
+TNS Ping Utility for 64-bit Windows: Version 19.0.0.0.0 - Production on 26-APR-2023 05:32:51
+
+run sqlplus and check task manager
+- it would show sqlplus.exe *32 for 32-bit 
+				sqlplus.exe for 64 bit
+
+
+--tar command
+--create tar
+tar -cvf optoracleproduct11202.tar /opt/oracle/product/11.2.0.2/
+--list contents of tar file
+ tar tf optoracleproduct11202.tar
+--extract tar file
+
+tar -xvf optoracleproduct11202.tar -C /opt/oracle/product/11.2.0.2/
+
+ du -sm ./* | sort -n  
+ du -sg ./* | sort -n  
+ du -sgx ./* |sort -n
+ 
+du -shx * - on Linux
+
+Hi Elizabeth,
+
+
+du -sg ./* | sort -n  
+
+Above commnd doesn't show accurate results if the current directory belongs to one file system and some of the nested directories are actually separate file systems.
+
+/opt/oracle has nested directories like that. In this case, adding 'x' to the command will only consider nested files/directories residing on same file system and consuming space.
+
+du -sgx ./* |sort -n
+
+You can see the size difference in output for these two commands for directories like product and admin.
+
+oracle@sdxbf-esmact [/opt/oracle]> du -sg ./* |sort -n
+0.00    ./audit
+0.00    ./checkpoints
+0.00    ./j
+0.00    ./lost+found
+0.00    ./oraInventory_191500
+0.00    ./oraInventory_191700
+0.00    ./oraInventory_192200
+0.00    ./oraInventory_19600
+0.02    ./oraInventory_20200422_134051
+0.02    ./oraInventory_20200422_160846
+0.02    ./oraInventory_20200422_160902
+0.03    ./oraInventory_20200422_161538
+0.04    ./oraInventory_20220815_102554
+0.05    ./oraInventory_20220818_113308
+0.07    ./oraInventory_20221201_160330
+0.08    ./oraInventory_20221219_090551
+0.10    ./oraInventory_20240325_144053
+0.11    ./oraInventory
+0.18    ./cfgtoollogs
+0.35    ./client
+1.50    ./diag
+1.78    ./admin
+134.73  ./product
+oracle@sdxbf-esmact [/opt/oracle]>  du -sgx ./* |sort -n
+0.00    ./admin
+0.00    ./audit
+0.00    ./checkpoints
+0.00    ./j
+0.00    ./lost+found
+0.00    ./oraInventory_191500
+0.00    ./oraInventory_191700
+0.00    ./oraInventory_192200
+0.00    ./oraInventory_19600
+0.00    ./product
+0.02    ./oraInventory_20200422_134051
+0.02    ./oraInventory_20200422_160846
+0.02    ./oraInventory_20200422_160902
+0.03    ./oraInventory_20200422_161538
+0.04    ./oraInventory_20220815_102554
+0.05    ./oraInventory_20220818_113308
+0.07    ./oraInventory_20221201_160330
+0.08    ./oraInventory_20221219_090551
+0.10    ./oraInventory_20240325_144053
+0.11    ./oraInventory
+0.18    ./cfgtoollogs
+0.35    ./client
+1.40    ./diag
+oracle@sdxbf-esmact [/opt/oracle]> pwd
+/opt/oracle
+
+  -s
+            For each file specified, displays the disk usage of the file. For each directory specified, displays the total disk usage of all files within the directory,
+            including all subdirectories. Contrast this flag with the -a flag.
+  -a
+            For each file specified, displays the disk usage of the file. For each directory specified, displays the disk usage of each individual file within the
+            directory, including all subdirectories. Contrast this flag with the -s flag.
+  -g
+            Calculates the block count in GB units rather than the default 512-byte units. The output values for the disk usage would be in floating point numbers as value
+            of each unit in bytes is significantly high.
+  -x
+            When evaluating file sizes, evaluates only those files that reside on the same device as the file or directory specified by the File parameter. For example,
+            you may specify a directory that contains files on several devices. In this case, the -x flag displays block sizes for all files that reside on the same device
+            as the directory.
+
+
+
+*************************
+
+I can't remember why/ when this came up in the chat, but when I need to see disk usage by directory, I use this a lot!  du -sm ./* | sort -n       (not sure if that addresses whatever the question was....) 
+
+Found this useful option in du command which takes files on that device into consideration, excluding files in subdirectories which could be on a separate FS.
+
+  -x
+            When evaluating file sizes, evaluates only those files that reside on the same device as the file or directory specified by the File parameter. For example,
+            you may specify a directory that contains files on several devices. In this case, the -x flag displays block sizes for all files that reside on the same device
+            as the directory.
+
+
+It looks /opt/oracle/product/11.2.0.2/client is not a separate file system, and this is consuming 50% of /opt/oracle. I am not sure what changed recently causing this FS reaching 100% often but will check further.
+
+Audit purge slow and best practices
+***********************************
+
+Purging Audit Logs Taking Too Long Using DBMS_AUDIT_MGMT. How to tune DB_DELETE_BATCH_SIZE ? (Doc ID 1920432.1)	
+Unified Auditing Purge Takes Too Long Time By DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL Using last_arch_timestamp (Doc ID 2573372.1)
+About Changing Partitioning Behavior of Unified Audit Trail (AUD$UNIFIED) (Doc ID 2438973.1)
+
+https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_AUDIT_MGMT.html#GUID-6C6914E9-94DB-4F3E-9F36-F1130EF2C62A	
+https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_AUDIT_MGMT.html#GUID-1EB3BBB1-4FC3-4BC3-8490-8300C950AC27__BABIDGEA
+
+https://learnomate.org/purge-aud-table-using-dbms_audit_mgmt/
+
+SELECT COUNT(*) FROM AUDSYS.AUD$UNIFIED;
+select count(*) from UNIFIED_AUDIT_TRAIL;
+
+column parameter_name format a30
+column parameter_value format a20
+column audit_trail format a20
+
+select * from dba_audit_mgmt_config_params;
+
+
+col PARTITION_NAME for a15
+col HIGH_VALUE for a40
+select partition_name,INTERVAL,HIGH_VALUE from dba_tab_partitions where table_name='AUD$UNIFIED';
+ 
+ 
+PARTITION_NAME  INT HIGH_VALUE                              
+--------------- --- ----------------------------------------
+SYS_P14479      NO  TIMESTAMP' 2025-06-01 00:00:00'         
+SYS_P14622      NO  TIMESTAMP' 2025-07-01 00:00:00'         
+ 
+ BEGIN
+ DBMS_AUDIT_MGMT.ALTER_PARTITION_INTERVAL(
+   interval_number       => 1,
+   interval_frequency    => 'DAY');
+ END;
+/
+ 
+
+BEGIN
+DBMS_AUDIT_MGMT.set_last_archive_timestamp(
+audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_UNIFIED,
+last_archive_time => SYSTIMESTAMP-30);
+END;
+/
+
+BEGIN
+DBMS_AUDIT_MGMT.SET_LAST_ARCHIVE_TIMESTAMP
+(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_UNIFIED,
+last_archive_time => TO_TIMESTAMP('2025-06-01 00:00:00','YYYY-MM-DD HH24:MI:SS'));
+END;
+/
+
+ COLUMN audit_trail FORMAT A20
+ COLUMN last_archive_ts FORMAT A40
+ SELECT * FROM dba_audit_mgmt_last_arch_ts;
+ 
+AUDIT_TRAIL          RAC_INSTANCE LAST_ARCHIVE_TS                          DATABASE_ID CONTAINER_GUID                   
+-------------------- ------------ ---------------------------------------- ----------- ---------------------------------
+UNIFIED AUDIT TRAIL             0 01-JUN-25 12.00.00.000000000 AM GMT       4256412313 F9BA1B07412D4489E05348EC990ACBDE 
+STANDARD AUDIT TRAIL            0 27-MAY-25 03.49.42.000000000 AM GMT       4256412313 F9BA1B07412D4489E05348EC990ACBDE 
+
+
+/* not working-- start
+exec dbms_audit_mgmt.set_audit_trail_property(dbms_audit_mgmt.AUDIT_TRAIL_UNIFIED,DBMS_AUDIT_MGMT.DB_DELETE_BATCH_SIZE,1000000);
+--default
+exec dbms_audit_mgmt.set_audit_trail_property(DBMS_AUDIT_MGMT.AUDIT_TRAIL_UNIFIED,DBMS_AUDIT_MGMT.DB_DELETE_BATCH_SIZE,10000);
+BEGIN
+DBMS_AUDIT_MGMT.set_audit_trail_property(
+audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL,
+audit_trail_property => DBMS_AUDIT_MGMT.DB_DELETE_BATCH_SIZE,
+audit_trail_property_value => 1000000
+);
+END;
+/
+* not working -end ***/
+
+exec dbms_audit_mgmt.set_audit_trail_property(DBMS_AUDIT_MGMT.audit_trail_aud_std,DBMS_AUDIT_MGMT.DB_DELETE_BATCH_SIZE,1000000);
+
+column parameter_name format a30
+column parameter_value format a20
+column audit_trail format a20
+
+select * from dba_audit_mgmt_config_params where parameter_name='DB AUDIT CLEAN BATCH SIZE';
+
+exec DBMS_AUDIT_MGMT.CLEAR_AUDIT_TRAIL_PROPERTY(DBMS_AUDIT_MGMT.audit_trail_aud_std,DBMS_AUDIT_MGMT.DB_DELETE_BATCH_SIZE,TRUE);
+
+BEGIN
+DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(
+  audit_trail_type         =>  DBMS_AUDIT_MGMT.audit_trail_aud_std,
+  use_last_arch_timestamp  =>  TRUE);
+END;
+/
+
+BEGIN
+DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(
+  audit_trail_type         =>  DBMS_AUDIT_MGMT.AUDIT_TRAIL_UNIFIED,
+  use_last_arch_timestamp  =>  TRUE);
+END;
+/
+
+begin
+  dbms_audit_mgmt.clear_last_archive_timestamp(
+    audit_trail_type  =>  DBMS_AUDIT_MGMT.AUDIT_TRAIL_UNIFIED);
+end;
+/
+
+--All audit trail types
+BEGIN
+DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(
+  audit_trail_type         =>  DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL,
+  use_last_arch_timestamp  =>  TRUE);
+END;
+/

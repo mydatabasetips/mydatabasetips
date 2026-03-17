@@ -1,0 +1,47 @@
+connect target sys/***@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=oraasgtd32-scan.nam.nsroot.net)(PORT=8889))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=LTFC3DV)))
+connect auxiliary sys/***@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=oraas-gt-d097-2)(PORT=1567))(CONNECT_DATA=(SERVER=DEDICATED)(INSTANCE_NAME=LTFC3DV)(SERVICE_NAME=MDLTFC3DV)(UR=A)))
+run { 
+allocate channel c1 type disk;
+allocate auxiliary channel t1 type disk;
+allocate channel c2 type disk;
+allocate auxiliary channel t2 type disk;
+allocate channel c3 type disk;
+allocate auxiliary channel t3 type disk;
+allocate channel c4 type disk;
+allocate auxiliary channel t4 type disk;
+allocate channel c5 type disk;
+allocate auxiliary channel t5 type disk;
+allocate channel c6 type disk;
+allocate auxiliary channel t6 type disk;
+allocate channel c7 type disk;
+allocate auxiliary channel t7 type disk;
+allocate channel c8 type disk;
+allocate auxiliary channel t8 type disk;
+duplicate target database for standby from active database dorecover spfile
+set db_unique_name='MDLTFC3DV' 
+set cluster_database='false' 
+set fal_server='LTFC3DV' 
+set fal_client='MDLTFC3DV' 
+set standby_file_management='AUTO' 
+set log_archive_config='dg_config=(LTFC3DV,MDLTFC3DV)' 
+set log_archive_dest_1='LOCATION=+DATA_LTFC3DV VALID_FOR=(ALL_LOGFILES,ALL_ROLES)' 
+set log_archive_dest_3='service=LTFC3DV ARCH valid_for=(ONLINE_LOGFILE,PRIMARY_ROLE) db_unique_name=LTFC3DV' 
+set remote_listener='oraasgtd097-scan.nam.nsroot.net:8889' 
+set local_listener='(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.210.66.165)(PORT=1567))(ADDRESS=(PROTOCOL=TCP)(HOST=10.210.66.165)(PORT=1568)))' 
+nofilenamecheck; 
+}
+
+
+
+run
+{
+set newname for tempfile 8  to '/oradata3/FCAXUAT2/TEMP_08.dbf';
+set newname for tempfile 9  to '/oradata3/FCAXUAT2/TEMP_09.dbf';
+set newname for tempfile 10  to '/oradata3/FCAXUAT2/TEMP_10.dbf';
+set newname for tempfile 11  to '/oradata3/FCAXUAT2/TEMP_11.dbf';
+set newname for tempfile 12  to '/oradata3/FCAXUAT2/TEMP_12.dbf';
+set newname for tempfile 13  to '/oradata3/FCAXUAT2/TEMP_13.dbf';
+DUPLICATE DATABASE TO FCAXUAT2 BACKUP LOCATION '/DDUMPS2/BACKUPS/DBBACKUPS/FCAXPROD_11JUL21'  NOFILENAMECHECK;
+}
+
+/optware/grid/19.0.0.0/bin/asmca -silent -adddisk -diskGroupName DATA_BDCAC2D -diskList /dev/asmdisks/asm_ssd0108,/dev/asmdisks/asm_ssd0219

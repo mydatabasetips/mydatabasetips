@@ -1,0 +1,155 @@
+
+
+
+ARFC1UT - 3 TB
+ARFC2UT - 1.5 TB
+ARFC3UT - 420 GB
+ARFC4UT - 2 to 3 TB (if restored from ARFC1UT)
+
+alter database recover managed standby database using current logfile disconnect from session;
+
+select capture_name,status from dba_capture;
+
+exec dbms_capture_adm.stop_capture('OGG$CAP_EXT1UTA',true);
+exec DBMS_CAPTURE_ADM.DROP_CAPTURE ('OGG$CAP_EXT1UTA');
+
+exec dbms_capture_adm.stop_capture('OGG$CAP_EXT1UTB',true);
+exec DBMS_CAPTURE_ADM.DROP_CAPTURE ('OGG$CAP_EXT1UTB');
+
+
+CONFIGURE ARCHIVELOG DELETION POLICY TO SHIPPED TO ALL STANDBY;
+
+CONFIGURE ARCHIVELOG DELETION POLICY TO BACKED UP 1 TIMES TO DEVICE TYPE DISK SHIPPED TO ALL STANDBY;
+
+CONFIGURE ARCHIVELOG DELETION POLICY TO SHIPPED TO ALL STANDBY;
+
+CONFIGURE ARCHIVELOG DELETION POLICY TO BACKED UP 1 TIMES TO DEVICE TYPE DISK ;
+
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 7 DAYS;
+
+02 10 * * * /acfsDDUMPS/SCRIPTS/Rman_Arch_Deletion.sh ARFC3UT1
+02 15 * * * /acfsDDUMPS/SCRIPTS/Rman_Arch_Deletion.sh ARFC4UT1
+02 20 * * * /acfsDDUMPS/SCRIPTS/Rman_Arch_Deletion.sh ARFC5UT1
+
+backup as compressed backupset archivelog all not backed up 1 times format '/acfsDDUMPS/BACKUPS/DBBACKUPS/ARFCNFG1/ARFCNFG1_ARCHLOGS_20220329_t%t_s%s_p%p.arc';
+
+
+ delete noprompt archivelog all backed up 1 times to device type disk;
+
+ delete force noprompt archivelog all backed up 1 times to device type disk;
+
+ delete force noprompt archivelog all completed before 'sysdate-2' backed up 1 times to device type disk;
+ 
+ delete noprompt archivelog until time 'sysdate-2' backed up 1 times to device type disk;
+
+  delete noprompt archivelog all applied on all standby;
+  
+  
+ restore  archivelog sequence between  26930 and 27000 thread 2;
+ restore  archivelog sequence between  30180 and 30210 thread 1;
+
+ restore  archivelog sequence between  30211 and 30250 thread 1;
+
+  
+--for standby
+
+  CONFIGURE ARCHIVELOG DELETION POLICY TO applied on ALL STANDBY;
+
+
+00 04 * * * /acfsDDUMPS/SCRIPTS/Rman_Arch_Deletion_MIS.sh ARFC1MIS1 
+00 04 * * * /acfsDDUMPS/SCRIPTS/Rman_Arch_Deletion_MIS.sh ARFCNMIS1 
+ 
+delete expired foreign archivelog all; - didn't work
+delete  foreign archivelog all; -couldn't delete files from cataloga as physical files no longer exist. crosscheck didn't help too.
+delete force foreign archivelog all;
+crosscheck archivelog all;
+
+RMAN fails with ORA-19809: limit exceeded for recovery files
+ 
+set pages 1000
+set lines 300
+col name for a10
+col space_limit for 99999999999999
+col SPACE_USED  for 99999999999999
+SELECT * FROM V$RECOVERY_FILE_DEST;
+
+ SELECT * FROM V$RECOVERY_AREA_USAGE;
+
+
+SELECT * FROM V$RECOVERY_FILE_DEST;
+
+NAME           SPACE_LIMIT      SPACE_USED SPACE_RECLAIMABLE NUMBER_OF_FILES     CON_ID
+---------- --------------- --------------- ----------------- --------------- ----------
++REDO        3113851289600   3113403547648          23068672            1342          0
+
+SQL> 
+SQL>  SELECT * FROM V$RECOVERY_AREA_USAGE;
+
+FILE_TYPE               PERCENT_SPACE_USED PERCENT_SPACE_RECLAIMABLE NUMBER_OF_FILES     CON_ID
+----------------------- ------------------ ------------------------- --------------- ----------
+CONTROL FILE                             0                         0               1          0
+REDO LOG                               .51                         0               5          0
+ARCHIVED LOG                         62.06                         0             819          0
+BACKUP PIECE                             0                         0               2          0
+IMAGE COPY                               0                         0               0          0
+FLASHBACK LOG                            0                         0               0          0
+FOREIGN ARCHIVED LOG                 37.41                         0             515          0
+AUXILIARY DATAFILE COPY                  0                         0               0          0
+
+8 rows selected.
+
+
+
+
+#!/bin/bash
+export MAILLIST=pk02254@imcnam.ssmb.com
+export SENDER=archmonitor@`hostname`
+for sid in `ps -ef|grep _smon|grep -v ASM|grep -v MGMT|grep -v grep|awk '{print $8}'| cut -c 10-17`
+do
+. oraenv <<END
+$sid
+END
+export ORACLE_SID
+echo "====================================" >>/acfsDDUMPS/LOGS/arch_gen_output_`hostname`.log
+sqlplus -s "/ as sysdba" <<EOF>> /acfsDDUMPS/LOGS/arch_gen_output_`hostname`.log
+select name "DatabaseName" from v\$database;
+set pages 1000
+set lines 300
+col day for a12
+SELECT TRUNC(COMPLETION_TIME,'DD') DAY,
+ROUND(SUM(BLOCKS*BLOCK_SIZE)/(1024*1024*1024)) SIZE_GB,
+COUNT(*) Archives_Generated
+FROM v\$archived_log
+WHERE TRUNC(COMPLETION_TIME,'DD') > sysdate-5
+and CREATOR='ARCH' 
+GROUP BY TRUNC(COMPLETION_TIME,'DD') 
+ORDER BY 1;
+exit
+echo $ORACLE_SID
+EOF
+done
+echo "Sending output through email"
+cat /acfsDDUMPS/LOGS/arch_gen_output_`hostname`.log | mailx -s "Archive Generation for past 5 days on `hostname` " -r $SENDER $MAILLIST
+rm /acfsDDUMPS/LOGS/arch_gen_output_`hostname`.log
+exit
+
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$GOLDENGATE_HOME
+export PATH=$GOLDENGATE_HOME:$PATH
+
+
+/flexbin/gg/scripts/monitoring_gg.sh FCAXUAT2 /optware/oracle/gg19c/19.1 00
+/flexbin/gg/scripts/monitoring_gg.sh FCPRF_GG /optware/oracle/gg/19.1 00
+
+
+. /lhome/oracle/.profile_FCAXUAT2
+v_rt=`date "+%Y-%m-%d-%H:%M:%S"`
+
+
+----
+
+https://docs.oracle.com/en/middleware/goldengate/core/19.1/oracle-db/preparing-database-oracle-goldengate.html#GUID-9FFB0F47-A681-4EC8-8E2E-4A03B451D916
+
+
+https://catecollaboration.citigroup.net/domains/platstor/db/OracleDocs/GoldenGate/TDLC%20Test%20Results%20GG19c.pdf
+
+https://docs.oracle.com/database/121/SUTIL/GUID-D2DDD67C-E1CC-45A6-A2A7-198E4C142FA3.htm#SUTIL1583

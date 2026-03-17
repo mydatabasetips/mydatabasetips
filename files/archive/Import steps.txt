@@ -1,0 +1,351 @@
+
+
+You can connect to target database using ADMIN_ORAAS (only DEV), your DBA_SEOID or EMR_DBA_SOEID (In UAT and PROD databases).
+Password should be reset through WAIS portal -> Privileged access --> LMS Request. You will need to create an incident with database names added as affected CIs
+
+WAIS portal --> https://datacentertoolsaccess.ti.citigroup.net/stools/wais/Home.aspx
+
+
+1) Source --> Create an datapump export on source database excluding internal schemas 
+
+--example 1 
+
+directory=DATA_PUMP 
+logfile=DATA_PUMP:GCEAD1_full.log 
+dumpfile=GCEAD1_full_%U.dmp 
+full=yes
+filesize=15G
+parallel=4
+exclude=schema:"IN ('ANONYMOUS','APPQOSSYS','DBSNMP','DDL_AUTOINSTALL','DIP','ORACLE_OCM','OUTLN','PERFSTAT','SYS','SYSMAN','SYSTEM','TSMSYS','WMSYS')"
+
+--example 2 ( if source is also OraaS, use the connect string as below)
+
+userid=dba_soeid/pwd@host-scan.nam.nsroot.net:port/SERVICE
+directory=DATA_PUMP_DIR
+logfile=DATA_PUMP_LOG_DIR:LOGFILENAME.log
+dumpfile=DUMPFILENAME_%U.dmp
+schemas=SCHEMANAME
+filesize=15G
+parallel=8
+cluster=N
+
+
+2) Target -> Ensure database has enough space allocated for import. Check disk space tab on OraaS Portal database details page. 
+	
+  You can read on OraaS backup SLA here- http://ewiki.nam.nsroot.net/wiki/Actifio_Integration_in_OraaS and  http://ewiki.nam.nsroot.net/wiki/Actifio-OraaS_SLA
+
+3) Ensure target has all database components that source database has. You can enable Oracle text through DST portal (hit change button and select enable oracle text from Operations dropdown list)
+4) Target -> Create all necessary tablespaces with same specification as source database. 
+5) Target -> Enable backups for target database through 'enable database protection' under backup & cloning tab on database page at DST portal. 
+			 Please ensure backups are running before starting import. Don't enable backups for DEV databases unless needed.
+			 
+  By default archives will be retained on disk for 60 minutes. Import may generate too many archives and disk space may reach to 100% by the time backup runs.
+  You can decrease backup retention to less value using below procedure. 
+  
+  exec sys.oraas_util.update_rman_archive_retention(30,'Y');
+  
+  select * from sys.CONFIG_RMAN_ARCHIVE_DELETION;
+  
+  Don't forget to revert it back to 60 minutes after the completion of import.
+  
+  exec sys.oraas_util.update_rman_archive_retention(60,'Y');
+  
+  --5 hours
+  exec sys.oraas_util.update_rman_archive_retention(300,'Y');
+
+  --24 hours
+  exec sys.oraas_util.update_rman_archive_retention(1440,'Y');
+  
+    exec sys.oraas_util.update_rman_archive_retention(300,'N');
+
+
+  
+  Databases that don't have backup protection will have 'delete archivelogs' operation in case space is 100% used and import/DB is stuck
+			 
+6) Source -> Create a database link to target database (Using your DBA_SOEID or EMER_DBA_SOEID)
+
+CREATE DATABASE LINK ORAAS_IMPORT
+  CONNECT TO DBA_SODEID IDENTIFIED BY "<password>" USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP) (HOST=oraasgtd11-scan.nam.nsroot.net)(PORT=8888))(CONNECT_DATA=(SERVICE_NAME = GCEADA)))';
+
+7) Source -->Transfer the dumps generated in step 1 using DBMS_FILE_TRANSFER.PUT_FILE
+
+	BEGIN
+	DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP','GCEAD1_full_01.dmp','DATA_PUMP_DIR','GCEAD1_full_01.dmp','ORAAS_IMPORT') ;
+	DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP','GCEAD1_full_02.dmp','DATA_PUMP_DIR','GCEAD1_full_02.dmp','ORAAS_IMPORT') ;
+	DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP','GCEAD1_full_03.dmp','DATA_PUMP_DIR','GCEAD1_full_03.dmp','ORAAS_IMPORT') ;
+	DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP','GCEAD1_full_04.dmp','DATA_PUMP_DIR','GCEAD1_full_04.dmp','ORAAS_IMPORT') ;
+	DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP','GCEAD1_full_05.dmp','DATA_PUMP_DIR','GCEAD1_full_05.dmp','ORAAS_IMPORT') ;
+	END;
+	/
+
+	This operation may fail if there is no enough space on DATA_PUMP_DG diskgroup on OraaS GRID.
+	You can check the total usage and usage by database by selecting 'DATA_PUMP_DG Total Usage' and 'DATA_PUMP_DG Usage by database' options under commands tab on database details page.
+	You can reach out to PDBA of the database that uses majority of the space and see if the dump files can be cleaned.  
+		
+	Also clean old dump of your database by selecting change and 'Cleanup DataPumpDG' from operations tab on database details page.
+	If more space is needed than total size of DATA_PUMP_DG try using compression option in datapump export.
+	If that is not feasible reach out to OraaS PROD support/L3 team to get the space increased.	
+	
+	12c clusters have an ACFS filesystem /datapumpacfs instead of +DATA_PUMP_DG diskgroup.
+	Below procedures can be used to list and clean contents of ACFS directories specific to the database.
+	
+	PROCEDURE LIST_ACFS_DIR(F_STR IN VARCHAR2 := NULL)
+	
+	This procedure is used to list the files of ACFS filesystem database directory, 
+	if no file string parameter passed, it displays all the files, if file string parameter passed, 
+	it only display the files with file string.
+	examples of the execution of this proc is:
+	SQL> set serveroutput on
+	SQL> exec sys.oraas_util.LIST_ACFS_DIR;
+	SQL> exec sys.oraas_util.LIST_ACFS_DIR('dmp');
+	here "set serveroutput on" is required since it is calling dbms_ouput_put_line to display the files.
+	
+	
+	PROCEDURE CLEAN_ACFS_DIR(F_STR IN VARCHAR2 := NULL)
+	
+	This procedure is used to remove the files under ACFS filesystem database directory, 
+	if no file string parameter passed, it cleans all the files, if file string parameter passed, 
+	it only clean the files with file string.
+	examples of the execution of this proc is:
+	SQL> exec sys.oraas_util.clean_ACFS_DIR;
+	or
+	SQL> exec sys.oraas_util.clean_ACFS_DIR('DMP');
+
+
+	If you still have space issue for transferring dumps, work with OraaS team, find out databases consuming /datapumpacfs.
+	Reach out PDBA/SDBA of those databases asking for cleanup
+	
+	If source database is huge, consider using compress=y option in export
+	
+	
+--Look for dumps
+
+set serveroutput on
+exec sys.oraas_util.LIST_ACFS_DIR;
+
+--Look for Pattern
+
+exec sys.oraas_util.LIST_ACFS_DIR('INC0073020076');
+exec sys.oraas_util.LIST_ACFS_DIR('exp_2gg_flexcr_for_sel_tab');
+
+
+--To Delete All
+
+exec sys.oraas_util.clean_ACFS_DIR;
+
+--To Delete with pattern
+
+exec sys.oraas_util.clean_ACFS_DIR('dmp');
+
+exec sys.oraas_util.clean_ACFS_DIR('exp_gg_for_sel_tab_1pd');
+exec sys.oraas_util.clean_ACFS_DIR('exp_2gg_flexcr_for_sel_tab_2dv');
+exec sys.oraas_util.clean_ACFS_DIR('LTFC1PD');
+exec sys.oraas_util.clean_ACFS_DIR('INC0073387812');
+
+exec sys.oraas_util.clean_ACFS_DIR('exp_2gg_flexcr_for_sel_tab');
+
+exec sys.oraas_util.clean_ACFS_DIR('expdp_fullDB_EFLOWP_FULL');
+
+	
+	
+8) Target --> Verify if files are successfully transferred using below query. You can crosscheck the size of dump files.
+
+set pages 100
+set lines 300
+col full_path for a80
+col permissions for a12
+col creation_date for a20
+col bytes for 999,999,999,999,999
+
+select concat('+'||gname, sys_connect_by_path(aname, '/')) full_path,
+         bytes,
+         permissions,
+         creation_date
+    from ( select b.name gname, a.parent_index pindex, a.name aname,
+              a.reference_index rindex , a.system_created, a.alias_directory, c.bytes, c.PERMISSIONS, c.CREATION_DATE,
+              c.type file_type
+       from v$asm_alias a, v$asm_diskgroup_stat b, v$asm_file c
+       where a.group_number = b.group_number
+             and b.NAME='DATA_PUMP_DG'
+             and a.group_number = c.group_number(+)
+             and a.file_number = c.file_number(+)
+             and a.file_incarnation = c.incarnation(+)
+      )
+    where system_created = 'N'
+    start with (mod(pindex, power(2, 24))) = 0
+            and rindex in
+                ( select a.reference_index
+                  from v$asm_alias a, v$asm_diskgroup_stat b, v$database d
+                  where a.group_number = b.group_number
+                    and (mod(a.parent_index, power(2, 24))) = 0
+                    and a.name = d.name
+                )
+    connect by prior rindex = pindex
+	order by full_path;
+
+	
+select distinct full_path, bytes, creation_date, type from 
+(
+SELECT CONCAT('+' || db_files.disk_group_name,
+	  SYS_CONNECT_BY_PATH(db_files.alias_name, '/')) full_path ,
+      round(db_files.bytes/1024) bytes ,
+	  db_files.creation_date ,
+	  NVL(LPAD(db_files.type, 18), '') type 
+	  FROM 
+	  ( SELECT 
+		g.name disk_group_name ,
+		a.parent_index pindex ,
+		a.name alias_name ,
+		a.reference_index rindex ,
+		a.system_created system_created ,
+		f.bytes bytes , f.type type ,
+		TO_CHAR(f.creation_date, 'DD-MON-YYYY HH24:MI:SS') creation_date 
+		FROM 
+		v$asm_file f RIGHT OUTER JOIN v$asm_alias a 
+		USING (group_number, file_number) JOIN v$asm_diskgroup g 
+		USING (group_number) where g.name = 'DATA_PUMP_DG' ) db_files 
+		WHERE db_files.type IS NOT NULL and db_files.system_created = 'N' 
+		START WITH (MOD(db_files.pindex, POWER(2, 24))) = 0 
+		CONNECT BY PRIOR db_files.rindex = db_files.pindex ) 
+		where upper(full_path) like '%/'||sys_context('userenv','db_unique_name')||'/%';
+	
+
+9) Source Server --> Start import connecting to target database using a par file as below.
+
+
+Use EMR_DBA_SOEID for UAT and PROD.  DBA_SOEID will not have all needed privileges to perform the import.
+
+Example
+
+userid=username/<password>@host-scan.nam.nsroot.net:portno/service
+directory=DATA_PUMP_DIR
+dumpfile=GCEAD1_full_%U.dmp
+logfile=DATA_PUMP_LOG_DIR:import_from_GCEAD1_to_GCEADA_20170307.log
+full=y
+cluster=n
+parallel=4
+exclude=schema:"IN ('ANONYMOUS','APPQOSSYS','DBSNMP','DDL_AUTOINSTALL','DIP','ORACLE_OCM','OUTLN','PERFSTAT','SYS','SYSMAN','SYSTEM','TSMSYS','WMSYS')"
+
+nohup impdp parfile=impdp_from_GCEAD1_to_GCEADA.par &
+
+10) Target --> Verify the import logfile or nohup.out. Log file can be retrieved from SQLPLUS or SQLDeveloper by running below PL/SQL
+
+create or replace directory TRC1 as '/optware/oracle/diag/rdbms/ltfc4ut/LTFC4UT1/trace/';
+
+create or replace directory TRC2 as '/optware/oracle/diag/rdbms/ltfc4ut/LTFC4UT2/trace/';
+
+
+SET SERVEROUTPUT ON SIZE UNLIMITED
+DECLARE 
+V1 VARCHAR2(32767);
+F1 UTL_FILE.FILE_TYPE; 
+BEGIN 
+--Replace with proper log file name you mentioned in import parfile
+F1 := UTL_FILE.FOPEN('DATA_PUMP_LOG_DIR','seqbug1.sql','R');
+LOOP
+BEGIN
+UTL_FILE.GET_LINE(F1,V1); 
+DBMS_OUTPUT.enable(null);
+DBMS_OUTPUT.PUT_LINE(V1);
+EXCEPTION WHEN NO_DATA_FOUND THEN EXIT; END;
+END LOOP;
+IF UTL_FILE.IS_OPEN(F1) THEN
+DBMS_OUTPUT.PUT_LINE('FILE IS OPEN');
+END IF;
+UTL_FILE.FCLOSE(F1);	
+END; 
+/
+SET SERVEROUTPUT OFF;
+
+IMPDP_INC0053211033_NEW_010618.log
+IMPDP_INC0053211033_FLEXPYV4MAY25_050618.log
+
+--or get log file back to source server
+
+BEGIN
+   	DBMS_FILE_TRANSFER.GET_FILE('DATA_PUMP_LOG_DIR','import_from_GCEAD1_to_GCEADA_20170307.log','ORAAS_IMPORT','DATA_PUMP','import_from_GCEAD1_to_GCEADA_20170307.log') ;
+END;
+	
+11) Verify the object count in source and target databases( in application schemas ) and recompile any invalid objects
+
+EXEC SYS.UTL_RECOMP.recomp_parallel(8); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(4); 
+
+
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXDO'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXDOV4'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXPY'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXCR'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXFIN'); 
+
+
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXPY'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXDO'); 
+EXEC SYS.UTL_RECOMP.recomp_parallel(6,'FLEXCR'); 
+
+EXEC SYS.UTL_RECOMP.recomp_parallel(4,'FLEXCR'); 
+
+
+EXEC SYS.UTL_RECOMP.recomp_parallel(4,'FLEXFIN'); 
+
+
+Serial
+
+EXEC SYS.UTL_RECOMP.recomp_serial();
+EXEC SYS.UTL_RECOMP.recomp_serial('FLEXPY');
+
+select 'alter '||object_type||' '||owner||'."'||object_name||'" compile; '
+from dba_objects 
+where
+object_type like '%JAVA%' 
+and owner='FLEXFIN' and status<>'VALID';
+
+
+
+select count(*) from dba_objects where status<>'VALID';
+set pages 100
+set lines 300
+col owner for a13
+col object_type for a25
+col object_name for a30
+select owner,object_type,object_name from dba_objects where status<>'VALID';
+
+select owner,object_type,object_name from dba_objects where status<>'VALID' and owner<>'SYS';
+
+
+12) Compare the grants for the application schemas and grant any missing grants using below process
+
+
+Set pages 10000;
+set long 10000000;
+select DBMS_METADATA.GET_DDL('USER','SCHEMA_NAME') from dual;
+select DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','SCHEMA_NAME') from dual;
+select DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','SCHEMA_NAME') from dual;
+select DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','SCHEMA_NAME') from dual;
+
+Example :
+
+exec sys.oraas_util.grt_sys_obj('V_$LOCK','FLEXFIN','SELECT');
+exec sys.oraas_util.grt_sys_obj('V_$PARAMETER','FLEXFIN','SELECT');
+
+exec sys.oraas_util.grt_sys_obj('DBMS_SCHEDULER','FID','EXECUTE');
+exec sys.oraas_util.grt_sys_obj('UTL_INADDR','FLEXFIN','EXECUTE');
+exec sys.oraas_util.grt_sys_obj('UTL_TCP','CMPDBO','EXECUTE');
+exec sys.oraas_util.grt_sys_obj('DBMS_LOCK','GFTSSIT2P','EXECUTE');
+
+exec sys.oraas_util.grt_sys_obj('V_$SESSION','FLEXCR','SELECT');
+exec sys.oraas_util.grt_sys_obj('V_$ARCHIVED_LOG','FLEXCR','SELECT');
+exec sys.oraas_util.grt_sys_obj('V_$SQLAREA','FLEXCR','SELECT');
+
+exec sys.oraas_util.grt_sys_obj('X$KSPPI','EMR_DBA_PK02254','SELECT');
+exec sys.oraas_util.grt_sys_obj('X$KSPPCV','EMR_DBA_PK02254','SELECT');
+
+
+exec sys.oraas_util.grt_sys_obj('DBMS_JOB','FBBOP','EXECUTE');
+
+
+You can read on granting/revoking privileges here - http://ewiki.nam.nsroot.net/wiki/OraaS_Util
+
+exec sys.oraas_util.grt_sys_obj('DBMS_LOCK','GFTSSIT10P','EXECUTE');
+
+

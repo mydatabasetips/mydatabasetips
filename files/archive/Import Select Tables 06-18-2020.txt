@@ -1,0 +1,477 @@
+
+
+In this case below are main and shadow DBs
+
+Main -- DB1
+Shadow -- DB2 
+
+sqlplus username/pwd@oraasgtd32-scan:8889/HADB1
+sqlplus username/pwd@oraasgtd78-scan:8889/HADB2
+
+1)Make sure shadow is OFFLINE. Ask NPS to set shadow env to offline using FLEXGGRPR if it is not set.
+
+--to check which env is online or offline
+select Zebra_Posting from FLEXCR.Iftb_Acpost_Status_Extgbl;
+
+2)Start extracts and pump processes before this point and use aftercsn for replicat
+
+start ext2dv
+start ext2gg
+
+*if extract stops due to missing archive logs - OGG-00868  Error code 1291, error message: ORA-01291: missing logfile, then restore archive logs and start extract.
+
+->How to Configure or Relocate the GoldenGate Integrated Extract When It Abends Error code 1291, error message: ORA-01291: missing logfile (Doc ID 2003603.1)
+
+*if archive logs cannot be restored, extracts have to be un-registered and registered again
+
+-->http://oracledbabhuvan.blogspot.com/2015/02/ogg-00868-error-code-1291-error-message.html
+-->Missing Log File <unknown> Read Position SCN 0 - ORA-600 Internal Error Code Arguments [17183] (Doc ID 1615826.1)
+
+stop extract ext2dv
+dblogin useridalias EXT2DV
+unregister extract ext2dv database
+register extract ext2dv database
+start extract ext2dv
+info extract ext2dv
+
+stop extract ext2gg
+dblogin useridalias EXT2GG
+unregister extract ext2gg database
+register extract ext2gg database
+start extract ext2gg
+info extract ext2gg
+
+--start pump processes
+start pmp2dv
+start pmp2gg
+
+--start 79 table refresh steps
+
+sqlplus username/pwd@oraasgtd32-scan:8889/HADB1
+sqlplus username/pwd@oraasgtd78-scan:8889/HADB2
+
+3) on DB1
+
+select name from v$database;
+
+col scn for 9999999999999999
+select  current_scn scn from V$database;
+
+15006980038576
+
+
+SELECT SCN_TO_TIMESTAMP(15006980038576) from dual;
+ 
+SCN_TO_TIMESTAMP(15006980038576)
+---------------------------------------------------------------------------
+05-JUN-20 12.39.27.000000000 PM
+
+
+1) Export selected tables from DB1
+
+Always make sure to get updated table list from param files. Currently we have 79 tables.
+
+exp_seltab_2dv0605.par
+
+userid=username/pwd@oraasgtd32-scan.nam.nsroot.net:8889/HADB1
+directory=DATA_PUMP_DIR
+logfile=DATA_PUMP_LOG_DIR:exp_seltab_2dv0605.log
+dumpfile=exp_seltab_2dv0605_%U.dmp
+tables=FLEXCR.ACTB_ACSERVICE_HANDOFF,
+FLEXCR.ACTB_DAILY_LOG,
+FLEXCR.ACTB_DAILY_LOG_EXTGBL,
+FLEXCR.ACTB_ENTRIES_HANDOFF,
+FLEXCR.ACTB_VD_BAL,
+FLEXCR.CATM_AMOUNT_BLOCKS,
+FLEXCR.CATM_AMOUNT_BLOCKS_EXTGBL,
+FLEXCR.COTM_SOURCE,
+FLEXCR.COTM_SOURCE_PREF,
+FLEXCR.CSTB_COMMITFREQ,
+FLEXCR.CSTB_DEBUG,
+FLEXCR.CSTB_DEBUG_USERS,
+FLEXCR.CSTB_PARAM,
+FLEXCR.CSTM_FUNCTION_UDF_FIELDS_MAP,
+FLEXCR.CSTM_FUNCTION_USERDEF_FIELDS,
+FLEXCR.CSTM_NARRATIVE_DETAIL,
+FLEXCR.CSTM_NARRATIVE_MASTER,
+FLEXCR.CSTM_UDF_VALS,
+FLEXCR.CVTM_TRANSLATION,
+FLEXCR.CYTB_CCY_PAIR_MASTER,
+FLEXCR.CYTB_RATES_HISTORY,
+FLEXCR.CYTM_CCY_DEFN_MASTER,
+FLEXCR.CYTM_CCY_PAIR_DEFN_MASTER,
+FLEXCR.CYTM_RATE_TYPE,
+FLEXCR.CYTM_RATES,
+FLEXCR.CYTM_RATES_MASTER,
+FLEXCR.DETM_BRANCH_COND_EXTGBL,
+FLEXCR.ERTB_MSGS,
+FLEXCR.GLTM_GLMASTER,
+FLEXCR.GWTB_NOTIFICATIONS_LOG,
+FLEXCR.ICTB_ACC_PR,
+FLEXCR.ICTM_BRANCH_PARAMETERS,
+FLEXCR.IFTB_ACCPOST_VALID_LOG_EXTGBL,
+FLEXCR.IFTB_ACPST_DTL_EXTGBL,
+FLEXCR.IFTB_ACPST_MST_EXTGBL,
+FLEXCR.IFTB_ECA_REQ_DTL_EXTGBL,
+FLEXCR.IFTB_ECA_RESP_DTL_EXTGBL,
+FLEXCR.IFTB_HOFF_PARAM,
+FLEXCR.IFTB_ONLINE_TXN_PROCESS_EXTGBL,
+FLEXCR.IFTB_OUT_DETAILS_EXTGBL,
+FLEXCR.IFTB_PARAM,
+FLEXCR.IFTB_TRN_CHANNEL_EXTGBL,
+FLEXCR.IFTB_ZEBRA_SEQ_EXTGBL,
+FLEXCR.IFTM_SOURCE_MAINT_EXTGBL,
+FLEXCR.ISTM_BIC_DIRECTORY,
+FLEXCR.MSTB_SWIFT_INTERIM_DETAILS,
+FLEXCR.MSTM_ADV_FORMAT_DET,
+FLEXCR.MSTM_CUST_ACC_ADDRESS,
+FLEXCR.MSTM_MCS,
+FLEXCR.MSTM_MSG_ACC_ADDRESS,
+FLEXCR.MSTM_MSG_TYPE,
+FLEXCR.MSTM_SWIFT_CHAR,
+FLEXCR.SMTB_USER,
+FLEXCR.SMTB_USER_BRANCHES,
+FLEXCR.STTB_ACCOUNT,
+FLEXCR.STTB_NOTIFICATION,
+FLEXCR.STTB_PER_CODE_STATUS,
+FLEXCR.STTM_ACC_PARAM,
+FLEXCR.STTM_ACCNET_DETAIL_EXTGBL,
+FLEXCR.STTM_ACCNET_MASTER_EXTGBL,
+FLEXCR.STTM_ACCOUNT_BALANCE,
+FLEXCR.STTM_ACCOUNT_CLASS,
+FLEXCR.STTM_AEOD_DATES,
+FLEXCR.STTM_BANK,
+FLEXCR.STTM_BRANCH,
+FLEXCR.STTM_BRANCH_EXTGBL,
+FLEXCR.STTM_CCY_HOL_MASTER,
+FLEXCR.STTM_CCY_HOLIDAY,
+FLEXCR.STTM_COUNTRY,
+FLEXCR.STTM_CUST_ACCOUNT,
+FLEXCR.STTM_CUST_ACCOUNT_EXTGBL,
+FLEXCR.STTM_CUSTOMER,
+FLEXCR.STTM_CUSTOMER_CAT,
+FLEXCR.STTM_DATES,
+FLEXCR.STTM_FLOAT_MAPPING_EXTGBL,
+FLEXCR.STTM_LCL_HOL_MASTER,
+FLEXCR.STTM_LCL_HOLIDAY,
+FLEXCR.STTM_TRN_CODE,
+FLEXCR.STTM_TRN_CODE_EXTGBL,
+parallel=4
+cluster=N
+FLASHBACK_SCN=15006980038576
+
+nohup expdp parfile=exp_seltab_2dv0605.par > exp_seltab_2dv0605.out &
+
+
+Dump file set for username.SYS_EXPORT_TABLE_01 is:
+  +DATA_PUMP_DG/ltfc2dv/exp_seltab_2dv0605_01.dmp
+  +DATA_PUMP_DG/ltfc2dv/exp_seltab_2dv0605_02.dmp
+  +DATA_PUMP_DG/ltfc2dv/exp_seltab_2dv0605_03.dmp
+  +DATA_PUMP_DG/ltfc2dv/exp_seltab_2dv0605_04.dmp
+Job "username"."SYS_EXPORT_TABLE_01" successfully completed at Fri Jun 5 12:49:24 2020 elapsed 0 00:01:46
+
+
+
+
+2)Tranfer dump from DB1 to DB2
+
+sqlplus username/pwd@oraasgtd32-scan.nam.nsroot.net:8889/HADB1
+
+on DB1
+
+CREATE DATABASE LINK toDB2
+  CONNECT TO username IDENTIFIED BY "pwd" USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP) (HOST=oraasgtd78-scan.nam.nsroot.net)(PORT=8889))(CONNECT_DATA=(SERVICE_NAME = HADB2)))';
+  
+
+select name from v$database@toDB2;
+
+set time on
+set timing on
+exec DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP_DIR','exp_seltab_2dv0605_01.dmp','DATA_PUMP_DIR','exp_seltab_2dv0605_01.dmp','toDB2') ;
+exec DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP_DIR','exp_seltab_2dv0605_02.dmp','DATA_PUMP_DIR','exp_seltab_2dv0605_02.dmp','toDB2') ;
+exec DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP_DIR','exp_seltab_2dv0605_03.dmp','DATA_PUMP_DIR','exp_seltab_2dv0605_03.dmp','toDB2') ;
+exec DBMS_FILE_TRANSFER.PUT_FILE('DATA_PUMP_DIR','exp_seltab_2dv0605_04.dmp','DATA_PUMP_DIR','exp_seltab_2dv0605_04.dmp','toDB2') ;
+
+drop database link toDB2;
+
+
+3)  disable triggers and enable them after import on DB2
+
+rm dis_sel_trig.sql
+rm ena_sel_trig.sql
+
+sqlplus username/pwd@oraasgtd78-scan.nam.nsroot.net:8889/HADB2
+
+
+set pages 0
+set lines 300
+spool dis_sel_trig.sql
+select 'alter trigger '||owner||'.'||trigger_name||' disable;' from dba_triggers
+where owner='FLEXCR'
+and status='ENABLED' 
+and table_name in 
+(
+'ACTB_ACSERVICE_HANDOFF',
+'ACTB_DAILY_LOG',
+'ACTB_DAILY_LOG_EXTGBL',
+'ACTB_ENTRIES_HANDOFF',
+'ACTB_VD_BAL',
+'CATM_AMOUNT_BLOCKS',
+'CATM_AMOUNT_BLOCKS_EXTGBL',
+'COTM_SOURCE',
+'COTM_SOURCE_PREF',
+'CSTB_COMMITFREQ',
+'CSTB_DEBUG',
+'CSTB_DEBUG_USERS',
+'CSTB_PARAM',
+'CSTM_FUNCTION_UDF_FIELDS_MAP',
+'CSTM_FUNCTION_USERDEF_FIELDS',
+'CSTM_NARRATIVE_DETAIL',
+'CSTM_NARRATIVE_MASTER',
+'CSTM_UDF_VALS',
+'CVTM_TRANSLATION',
+'CYTB_CCY_PAIR_MASTER',
+'CYTB_RATES_HISTORY',
+'CYTM_CCY_DEFN_MASTER',
+'CYTM_CCY_PAIR_DEFN_MASTER',
+'CYTM_RATE_TYPE',
+'CYTM_RATES',
+'CYTM_RATES_MASTER',
+'DETM_BRANCH_COND_EXTGBL',
+'ERTB_MSGS',
+'GLTM_GLMASTER',
+'GWTB_NOTIFICATIONS_LOG',
+'ICTB_ACC_PR',
+'ICTM_BRANCH_PARAMETERS',
+'IFTB_ACCPOST_VALID_LOG_EXTGBL',
+'IFTB_ACPST_DTL_EXTGBL',
+'IFTB_ACPST_MST_EXTGBL',
+'IFTB_ECA_REQ_DTL_EXTGBL',
+'IFTB_ECA_RESP_DTL_EXTGBL',
+'IFTB_HOFF_PARAM',
+'IFTB_ONLINE_TXN_PROCESS_EXTGBL',
+'IFTB_OUT_DETAILS_EXTGBL',
+'IFTB_PARAM',
+'IFTB_TRN_CHANNEL_EXTGBL',
+'IFTB_ZEBRA_SEQ_EXTGBL',
+'IFTM_SOURCE_MAINT_EXTGBL',
+'ISTM_BIC_DIRECTORY',
+'MSTB_SWIFT_INTERIM_DETAILS',
+'MSTM_ADV_FORMAT_DET',
+'MSTM_CUST_ACC_ADDRESS',
+'MSTM_MCS',
+'MSTM_MSG_ACC_ADDRESS',
+'MSTM_MSG_TYPE',
+'MSTM_SWIFT_CHAR',
+'SMTB_USER',
+'SMTB_USER_BRANCHES',
+'STTB_ACCOUNT',
+'STTB_NOTIFICATION',
+'STTB_PER_CODE_STATUS',
+'STTM_ACC_PARAM',
+'STTM_ACCNET_DETAIL_EXTGBL',
+'STTM_ACCNET_MASTER_EXTGBL',
+'STTM_ACCOUNT_BALANCE',
+'STTM_ACCOUNT_CLASS',
+'STTM_AEOD_DATES',
+'STTM_BANK',
+'STTM_BRANCH',
+'STTM_BRANCH_EXTGBL',
+'STTM_CCY_HOL_MASTER',
+'STTM_CCY_HOLIDAY',
+'STTM_COUNTRY',
+'STTM_CUST_ACCOUNT',
+'STTM_CUST_ACCOUNT_EXTGBL',
+'STTM_CUSTOMER',
+'STTM_CUSTOMER_CAT',
+'STTM_DATES',
+'STTM_FLOAT_MAPPING_EXTGBL',
+'STTM_LCL_HOL_MASTER',
+'STTM_LCL_HOLIDAY',
+'STTM_TRN_CODE',
+'STTM_TRN_CODE_EXTGBL'
+)
+order by table_name,trigger_name;
+spool off
+spool off
+
+--needed for later
+
+set pages 0
+set lines 300
+spool ena_sel_trig.sql
+select 'alter trigger '||owner||'.'||trigger_name||' enable;' from dba_triggers
+where owner='FLEXCR'
+and status='ENABLED' 
+and table_name in 
+(
+'ACTB_ACSERVICE_HANDOFF',
+'ACTB_DAILY_LOG',
+'ACTB_DAILY_LOG_EXTGBL',
+'ACTB_ENTRIES_HANDOFF',
+'ACTB_VD_BAL',
+'CATM_AMOUNT_BLOCKS',
+'CATM_AMOUNT_BLOCKS_EXTGBL',
+'COTM_SOURCE',
+'COTM_SOURCE_PREF',
+'CSTB_COMMITFREQ',
+'CSTB_DEBUG',
+'CSTB_DEBUG_USERS',
+'CSTB_PARAM',
+'CSTM_FUNCTION_UDF_FIELDS_MAP',
+'CSTM_FUNCTION_USERDEF_FIELDS',
+'CSTM_NARRATIVE_DETAIL',
+'CSTM_NARRATIVE_MASTER',
+'CSTM_UDF_VALS',
+'CVTM_TRANSLATION',
+'CYTB_CCY_PAIR_MASTER',
+'CYTB_RATES_HISTORY',
+'CYTM_CCY_DEFN_MASTER',
+'CYTM_CCY_PAIR_DEFN_MASTER',
+'CYTM_RATE_TYPE',
+'CYTM_RATES',
+'CYTM_RATES_MASTER',
+'DETM_BRANCH_COND_EXTGBL',
+'ERTB_MSGS',
+'GLTM_GLMASTER',
+'GWTB_NOTIFICATIONS_LOG',
+'ICTB_ACC_PR',
+'ICTM_BRANCH_PARAMETERS',
+'IFTB_ACCPOST_VALID_LOG_EXTGBL',
+'IFTB_ACPST_DTL_EXTGBL',
+'IFTB_ACPST_MST_EXTGBL',
+'IFTB_ECA_REQ_DTL_EXTGBL',
+'IFTB_ECA_RESP_DTL_EXTGBL',
+'IFTB_HOFF_PARAM',
+'IFTB_ONLINE_TXN_PROCESS_EXTGBL',
+'IFTB_OUT_DETAILS_EXTGBL',
+'IFTB_PARAM',
+'IFTB_TRN_CHANNEL_EXTGBL',
+'IFTB_ZEBRA_SEQ_EXTGBL',
+'IFTM_SOURCE_MAINT_EXTGBL',
+'ISTM_BIC_DIRECTORY',
+'MSTB_SWIFT_INTERIM_DETAILS',
+'MSTM_ADV_FORMAT_DET',
+'MSTM_CUST_ACC_ADDRESS',
+'MSTM_MCS',
+'MSTM_MSG_ACC_ADDRESS',
+'MSTM_MSG_TYPE',
+'MSTM_SWIFT_CHAR',
+'SMTB_USER',
+'SMTB_USER_BRANCHES',
+'STTB_ACCOUNT',
+'STTB_NOTIFICATION',
+'STTB_PER_CODE_STATUS',
+'STTM_ACC_PARAM',
+'STTM_ACCNET_DETAIL_EXTGBL',
+'STTM_ACCNET_MASTER_EXTGBL',
+'STTM_ACCOUNT_BALANCE',
+'STTM_ACCOUNT_CLASS',
+'STTM_AEOD_DATES',
+'STTM_BANK',
+'STTM_BRANCH',
+'STTM_BRANCH_EXTGBL',
+'STTM_CCY_HOL_MASTER',
+'STTM_CCY_HOLIDAY',
+'STTM_COUNTRY',
+'STTM_CUST_ACCOUNT',
+'STTM_CUST_ACCOUNT_EXTGBL',
+'STTM_CUSTOMER',
+'STTM_CUSTOMER_CAT',
+'STTM_DATES',
+'STTM_FLOAT_MAPPING_EXTGBL',
+'STTM_LCL_HOL_MASTER',
+'STTM_LCL_HOLIDAY',
+'STTM_TRN_CODE',
+'STTM_TRN_CODE_EXTGBL'
+)
+order by table_name,trigger_name;
+spool off
+spool off
+
+
+@dis_sel_trig.sql
+
+make sure to run @ena_sel_trig.sql after completion of import
+
+4)Import selected tables from new dump
+
+imp_seltab_2gg0605.par
+
+userid=username/pwd@oraasgtd78-scan.nam.nsroot.net:8889/HADB2
+directory=DATA_PUMP_DIR
+logfile=DATA_PUMP_LOG_DIR:imp_seltab_2gg0605.log
+dumpfile=exp_seltab_2dv0605_%U.dmp
+full=y
+parallel=4
+table_exists_action=truncate
+remap_tablespace=FLEXPY_DATA:FLEXCR_DATA
+cluster=N
+
+nohup impdp parfile=imp_seltab_2gg0605.par > imp_seltab_2gg0605.out &
+
+Job "username"."SYS_IMPORT_FULL_01" successfully completed at Fri Jun 5 12:59:30 2020 elapsed 0 00:01:01
+
+
+
+oracle@lmwttsfltmdb1p.nam.nsroot.net():/optware/oracle/praneeth> grep exported  exp_seltab_2dv0605.out|wc -l
+79
+oracle@lmwttsfltmdb1p.nam.nsroot.net():/optware/oracle/praneeth> grep truncated  imp_seltab_2gg0605.out|wc -l
+79
+oracle@lmwttsfltmdb1p.nam.nsroot.net():/optware/oracle/praneeth> grep imported  imp_seltab_2gg0605.out|wc -l
+79
+
+
+
+
+5) Enable triggers in DB2
+
+sqlplus username/pwd@oraasgtd78-scan.nam.nsroot.net:8889/HADB2
+
+@ena_sel_trig.sql
+
+********************************************************
+
+6) Start replicat processes
+
+--for REP2GG
+
+Start replicat with AFTERCSN clause with SCN value from export on source
+
+START REPLICAT REP2GG,AFTERCSN 15006980038576
+
+--for REP2DV
+
+Start from current time (begin now) as there should not be any transactions happening in from shadow to main
+
+ALTER REPLICAT REP2DV, BEGIN NOW
+START REPLICAT REP2DV
+
+7) Check GG process status
+
+All processes should be running.
+
+GGSCI (lgtttsfltmdb1d.nam.nsroot.net) 1> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING                                           
+EXTRACT     RUNNING     EXT2DV      00:00:03      00:00:05    
+EXTRACT     RUNNING     EXT2GG      00:00:04      00:00:02    
+EXTRACT     RUNNING     PMP2DV      00:00:00      00:00:05    
+EXTRACT     RUNNING     PMP2GG      00:00:00      00:00:05    
+REPLICAT    RUNNING     REP2DV      00:00:00      00:00:00    
+REPLICAT    RUNNING     REP2GG      00:00:00      00:00:09   
+
+GG alert log file --> /optware/ggate_home1/12.3.0.1/12c/ggserr.log
+
+process report files can be found at --> /optware/ggate_home1/12.3.0.1/12c/dirrpt/{PROCESS}.rpt 
+process discard files can be found at --> /optware/ggate_home1/12.3.0.1/12c/dirrpt/{process}.rpt 
+process param files can be found at --> /optware/ggate_home1/12.3.0.1/12c/dirprm/{process}.prm 
+
+load . /optware/oracle/primary_env to set all GG env variables.
+
+
+
+
+
