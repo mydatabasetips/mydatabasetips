@@ -1,0 +1,442 @@
+
+/*****************************************
+bssprd
+
+/u00/ora/prod/run_expdp.ksh bssprd /u00/ora/prod/exp_GGSDX_STG_SDX_P_FLAG.par "'/ as sysdba'"
+
+/u00/ora/prod/exp_GGSDX_STG_SDX_P_FLAG.par
+
+FLASHBACK_TIME="TO_TIMESTAMP(sysdate,'MM/DD/YYYY HH24:MI:SS')"
+
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_GGSDX_STG_SDX_P_FLAG.dmp
+LOGFILE=exp_GGSDX_STG_SDX_P_FLAG.log
+TABLES=GGSDX.STG_SDX_P_FLAG
+REUSE_DUMPFILES=Y
+
+*******************************************************/
+
+
+
+/*****************************************
+bssprd backup on 07/18/2023 DSR 21339
+
+/u00/ora/prod/run_expdp.ksh bssprd /u00/ora/prod/exp_GGSDX_STG_SDX_P_FLAG.par "'/ as sysdba'"
+
+/u00/ora/prod/exp_GGSDX_STG_SDX_P_FLAG.par
+
+FLASHBACK_TIME="TO_TIMESTAMP(sysdate,'MM/DD/YYYY HH24:MI:SS')"
+
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_GGSDX_STG_SDX_P_FLAG.dmp
+LOGFILE=exp_GGSDX_STG_SDX_P_FLAG.log
+TABLES=GGSDX.STG_SDX_P_FLAG
+REUSE_DUMPFILES=Y
+
+*******************************************************/
+
+
+can also use FLASHBACK_TIME=SYSTIMESTAMP
+*******************************************
+dwdev
+
+/oraback/exp/dwdevcdb/exp_DSR21334.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwdev_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21334_%U.dmp
+PARALLEL=4
+LOGFILE=exp_DSR21334.log
+TABLES=HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL,HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL_CAN
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+
+expdp parfile=/oraback/exp/dwdevcdb/exp_DSR21334.par
+
+*******************************************************************************************
+
+-07/19/2023
+/oraback/exp/dwqascdb/exp_DSR21359_DWQAS.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwqas_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21359_DWQAS_%U.dmp
+PARALLEL=4
+LOGFILE=exp_DSR21359_DWQAS.log
+TABLES=HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL,HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL_CAN
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+expdp parfile=/oraback/exp/dwqascdb/exp_DSR21359_DWQAS.par
+
+
+Export: Release 19.0.0.0.0 - Production on Wed Jul 19 04:24:18 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+19-JUL-23 04:24:22.557: Starting "PKANCHERLA"."SYS_EXPORT_TABLE_01":  pkancherla/********@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwqas_ist.subiadnpdb.vcniadnonprod.oraclevcn.com parfile=/oraback/exp/dwqascdb/exp_DSR21359_DWQAS.par
+19-JUL-23 04:24:26.990: Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+19-JUL-23 04:24:27.610: Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+19-JUL-23 04:24:30.666: Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+19-JUL-23 04:24:33.170: Processing object type TABLE_EXPORT/TABLE/TABLE
+19-JUL-23 04:24:34.063: Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+19-JUL-23 04:24:35.373: Processing object type TABLE_EXPORT/TABLE/COMMENT
+19-JUL-23 04:24:36.763: Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+19-JUL-23 04:24:37.923: Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+19-JUL-23 04:24:46.655: Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+19-JUL-23 04:30:19.155: . . exported "HRP_OWNER"."F_KRS_ACTUAL_HOURS_DTL"        11.21 GB 201816949 rows
+19-JUL-23 04:32:21.266: . . exported "HRP_OWNER"."F_KRS_ACTUAL_HOURS_DTL_CAN"    1.216 GB 29394236 rows
+19-JUL-23 04:32:39.601: Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+19-JUL-23 04:32:39.989: ORA-39173: Encrypted data has been stored unencrypted in dump file set.
+19-JUL-23 04:32:41.465: Master table "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+19-JUL-23 04:32:41.533: ******************************************************************************
+19-JUL-23 04:32:41.534: Dump file set for PKANCHERLA.SYS_EXPORT_TABLE_01 is:
+19-JUL-23 04:32:41.536:   /oraback/exp/dwqascdb/oraback/exp/dwqascdb/exp_DSR21359_DWQAS_01.dmp
+19-JUL-23 04:32:41.537:   /oraback/exp/dwqascdb/exp_DSR21359_DWQAS_02.dmp
+19-JUL-23 04:32:41.537:   /oraback/exp/dwqascdb/exp_DSR21359_DWQAS_03.dmp
+19-JUL-23 04:32:41.538:   /oraback/exp/dwqascdb/exp_DSR21359_DWQAS_04.dmp
+19-JUL-23 04:32:41.538:   /oraback/exp/dwqascdb/exp_DSR21359_DWQAS_05.dmp
+19-JUL-23 04:32:41.579: Job "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully completed at Wed Jul 19 04:32:41 2023 elapsed 0 00:08:22
+
+
+**********************************************************************************
+
+/oraback/exp/dwstgcdb/exp_DSR21359_DWSTG.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21359_DWSTG_%U.dmp
+PARALLEL=4
+LOGFILE=exp_DSR21359_DWSTG.log
+TABLES=HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL,HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL_CAN
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+expdp parfile=/oraback/exp/dwstgcdb/exp_DSR21359_DWSTG.par
+
+Export: Release 19.0.0.0.0 - Production on Wed Jul 19 04:35:37 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 19c EE Extreme Perf Release 19.0.0.0.0 - Production
+19-JUL-23 04:35:44.956: Starting "PKANCHERLA"."SYS_EXPORT_TABLE_01":  pkancherla/********@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com parfile=/oraback/exp/dwstgcdb/exp_DSR21359_DWSTG.par
+19-JUL-23 04:35:57.602: Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+19-JUL-23 04:36:04.502: Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+19-JUL-23 04:36:06.856: Processing object type TABLE_EXPORT/TABLE/TABLE
+19-JUL-23 04:36:06.932: Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+19-JUL-23 04:36:12.552: Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+19-JUL-23 04:36:17.920: Processing object type TABLE_EXPORT/TABLE/COMMENT
+19-JUL-23 04:36:18.628: Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+19-JUL-23 04:36:28.013: Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+19-JUL-23 04:36:34.778: Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+19-JUL-23 04:42:51.704: . . exported "HRP_OWNER"."F_KRS_ACTUAL_HOURS_DTL"        11.21 GB 201816949 rows
+19-JUL-23 04:44:45.774: . . exported "HRP_OWNER"."F_KRS_ACTUAL_HOURS_DTL_CAN"    1.216 GB 29394236 rows
+19-JUL-23 04:45:56.958: Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+19-JUL-23 04:46:01.286: ORA-39173: Encrypted data has been stored unencrypted in dump file set.
+19-JUL-23 04:46:03.122: Master table "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+19-JUL-23 04:46:03.381: ******************************************************************************
+19-JUL-23 04:46:03.382: Dump file set for PKANCHERLA.SYS_EXPORT_TABLE_01 is:
+19-JUL-23 04:46:03.386:   /oraback/exp/dwstgcdb/exp_DSR21359_DWSTG_01.dmp
+19-JUL-23 04:46:03.386:   /oraback/exp/dwstgcdb/exp_DSR21359_DWSTG_02.dmp
+19-JUL-23 04:46:03.387:   /oraback/exp/dwstgcdb/exp_DSR21359_DWSTG_03.dmp
+19-JUL-23 04:46:03.388:   /oraback/exp/dwstgcdb/exp_DSR21359_DWSTG_04.dmp
+19-JUL-23 04:46:03.388:   /oraback/exp/dwstgcdb/exp_DSR21359_DWSTG_05.dmp
+19-JUL-23 04:46:03.525: Job "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully completed at Wed Jul 19 04:46:03 2023 elapsed 0 00:10:23
+
+/oraback/exp/dwpdcdb/exp_DSR21365_DWPROD.par
+
+USERID="USER/PWD@exasod-prod-rppit-scan.subiadproddb.vcniadprod.oraclevcn.com:1521/dwprod_ist.subiadproddb.vcniadprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21365_DWPROD_%U.dmp
+PARALLEL=4
+LOGFILE=exp_DSR21365_DWPROD.log
+TABLES=HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL,HRP_OWNER.F_KRS_ACTUAL_HOURS_DTL_CAN
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+
+--DSR 21464
+DWSTG
+
+-07/19/2023
+/oraback/exp/dwstgcdb/exp_DSR21464_DWSTG.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21464_DWSTG_%U.dmp
+PARALLEL=6
+LOGFILE=exp_DSR21464_DWSTG.log
+SCHEMAS=HRP_STAGE
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+expdp parfile=/oraback/exp/dwstgcdb/exp_DSR21464_DWSTG.par
+
+
+--impdp
+
+/oraback/exp/dwstgcdb/imp_DSR21464_DWSTG.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21464_DWSTG_%U.dmp
+PARALLEL=6
+LOGFILE=imp_DSR21464_DWSTG.log
+REMAP_SCHEMA=HRP_STAGE:HRP_STAGE_11G
+REMAP_TABLESPACE=HRP_STAGE_DATA:HRP_STAGE_11G_DATA
+LOGTIME=STATUS
+FULL=Y
+
+impdp parfile=/oraback/exp/dwstgcdb/imp_DSR21464_DWSTG.par
+
+
+--DSR 21464
+DWSTG
+
+-07/19/2023
+/oraback/exp/dwstgcdb/exp_DSR21464_DWSTG.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21464_DWSTG_%U.dmp
+PARALLEL=6
+LOGFILE=exp_DSR21464_DWSTG.log
+SCHEMAS=HRP_STAGE
+REUSE_DUMPFILES=Y
+COMPRESSION=DATA_ONLY
+LOGTIME=STATUS
+
+expdp parfile=/oraback/exp/dwstgcdb/exp_DSR21464_DWSTG.par
+
+--08/17/2023
+--DSR 21498
+
+
+****DWPROD to DWSTG
+
+/oraback/exp/dwpdcdb/exp_DSR21498_DWPROD.par
+
+
+USERID="USER/PWD@exasod-prod-rppit2-vip.subiadproddb.vcniadprod.oraclevcn.com:1521/dwprod_ist.subiadproddb.vcniadprod.oraclevcn.com"
+PARALLEL=10
+DUMPFILE=exp_DSR21498_DWPROD_%U.dmp
+LOGFILE=exp_DSR21498_DWPROD.log
+LOGTIME=STATUS
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+CONTENT=DATA_ONLY
+COMPRESSION=DATA_ONLY
+TABLES=AR_STAGE.S_AR_CATALOG_CURR
+,AR_STAGE.S_AR_PROD_XREF
+,AR_STAGE.S_VAT_ALL_EFM_SHARE_RATES
+,AR_STAGE.S_VAT_EFM_RATE
+,EDW.D_CUSTOMER
+,GRPT_OWNER.D_DIVISION,
+,PIM_OWNER.B_PIM_PCC_CATALOG_DAT
+,PIM_OWNER.D_PIM_ALLERGEN
+,PIM_OWNER.D_PIM_DIET_TYPE
+,PIM_OWNER.D_PIM_MANUFACTURER_ITEM
+,PIM_OWNER.D_PIM_NUTRIENT
+,PIM_OWNER.F_ITEM_ALLERGEN_VALUE
+,PIM_OWNER.F_ITEM_DIET_VALUE
+,PIM_OWNER.F_ITEM_NUTRIENT_VALUE
+,SM_OWNER.B_DISTRIBUTOR_ITEM_PRODUCT
+,SM_OWNER.B_DISTRIBUTOR_UNIT
+,SM_OWNER.D_DISTRIBUTOR
+,SM_OWNER.D_DISTRIBUTOR_ITEM
+,SM_OWNER.D_DISTRIBUTOR_PRODUCT
+,SM_OWNER.D_GPO_CODE
+,SM_OWNER.D_GPO_GROUP
+,SM_OWNER.D_GPO_ROLLUP
+,SM_OWNER.D_INVOICE_CUSTOMER
+,SM_OWNER.D_MANUFACTURER
+,SM_OWNER.D_MANUFACTURER_PRODUCT
+,SM_OWNER.D_PRICE_AUDIT_TRN_HDR
+,SM_OWNER.D_PRICE_CONTRACT
+,SM_OWNER.D_PRICE_CONTRACT_EXCEPTION
+,SM_OWNER.D_PRICE_CONTRACT_RATE
+,SM_OWNER.D_PRICE_PROGRAM
+,SM_OWNER.D_PRODUCT
+,SM_OWNER.D_PRODUCT_FAMILY
+,SM_OWNER.D_PRODUCT_FAMILY_TYPE
+,SM_OWNER.D_PRODUCT_SUB_FAMILY_TYPE
+,SM_OWNER.D_PRODUCT_SUB_SUB_FAMILY_TYPE
+,SM_OWNER.D_PURCHASE_POS_FLAG
+,SM_OWNER.D_PURCHASING_ENTITY
+,SM_OWNER.D_PURCHASING_UNIT
+,SM_OWNER.D_VENDOR_PRODUCT
+,SM_OWNER.F_POS_SPEND_AUDIT
+,SM_OWNER.F_PURCHASE_INVOICE_DTL
+,SM_OWNER.F_PURCHASE_POS_CONTRACT_FLAG
+,SM_OWNER.F_PURCHASE_POS_DTL
+,SM_STAGE.S_SM_ENT_VDA_SLE
+,TMC_OWNER.B_VAT_DISTRB_BRAND_FLAG
+,TMC_OWNER.D_CATALOG_FLAG
+
+ expdp parfile=/oraback/exp/dwpdcdb/exp_DSR21498_DWPROD.par
+ 
+ 17-AUG-23 06:45:35.265: Master table "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+17-AUG-23 06:45:40.120: ******************************************************************************
+17-AUG-23 06:45:40.121: Dump file set for PKANCHERLA.SYS_EXPORT_TABLE_01 is:
+17-AUG-23 06:45:40.127:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_01.dmp
+17-AUG-23 06:45:40.128:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_02.dmp
+17-AUG-23 06:45:40.129:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_03.dmp
+17-AUG-23 06:45:40.129:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_04.dmp
+17-AUG-23 06:45:40.130:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_05.dmp
+17-AUG-23 06:45:40.130:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_06.dmp
+17-AUG-23 06:45:40.131:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_07.dmp
+17-AUG-23 06:45:40.131:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_08.dmp
+17-AUG-23 06:45:40.132:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_09.dmp
+17-AUG-23 06:45:40.132:   /oraback/exp/dwpdcdb/exp_DSR21498_DWPROD_10.dmp
+17-AUG-23 06:45:42.793: Job "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully completed at Thu Aug 17 06:45:42 2023 elapsed 0 00:48:07
+
+
+
+--impdp
+
+/oraback/exp/dwstgcdb/imp_DSR21498_DWSTG.par
+
+USERID="UER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/dwstg_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21498_DWPROD_%U.dmp
+PARALLEL=6
+LOGFILE=imp_DSR21498_DWSTG.log
+TABLE_EXISTS_ACTION=APPEND
+LOGTIME=STATUS
+FULL=Y
+DATA_OPTIONS=SKIP_CONSTRAINT_ERRORS
+
+impdp parfile=/oraback/exp/dwstgcdb/imp_DSR21498_DWSTG.par
+
+
+
+**DIPROD to DIUAT
+
+/oraback/exp/diprdcdb/exp_DSR21498_DIPROD.par
+
+
+USERID="USER/PWD@exasod-prod-rppit2-vip.subiadproddb.vcniadprod.oraclevcn.com:1521/diprd_ist.subiadproddb.vcniadprod.oraclevcn.com"
+PARALLEL=2
+DUMPFILE=exp_DSR21498_DIPROD_%U.dmp
+LOGFILE=exp_DSR21498_DIPROD.log
+LOGTIME=STATUS
+FLASHBACK_TIME=SYSTIMESTAMP
+DIRECTORY=DATA_PUMP_ORABACK_DIR_EXP
+CONTENT=DATA_ONLY
+COMPRESSION=DATA_ONLY
+TABLES=SM_APPL.SM_VDA_TYPE,SM_APPL.SM_VENDOR_CUSTOMER_RELATE
+
+
+expdp parfile=/oraback/exp/diprdcdb/exp_DSR21498_DIPROD.par
+
+17-AUG-23 09:48:05.199: Master table "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+17-AUG-23 09:48:05.677: ******************************************************************************
+17-AUG-23 09:48:05.678: Dump file set for PKANCHERLA.SYS_EXPORT_TABLE_01 is:
+17-AUG-23 09:48:05.686:   /oraback/exp/diprdcdb/exp_DSR21498_DIPROD_01.dmp
+17-AUG-23 09:48:05.687:   /oraback/exp/diprdcdb/exp_DSR21498_DIPROD_02.dmp
+17-AUG-23 09:48:05.959: Job "PKANCHERLA"."SYS_EXPORT_TABLE_01" successfully completed at Thu Aug 17 09:48:05 2023 elapsed 0 00:00:18
+
+
+
+set pages 200
+set lines 300
+
+select 'alter table '||a.owner||'.'||a.table_name||' disable constraint '||a.constraint_name||';'
+from all_constraints a, all_constraints b
+where a.constraint_type = 'R' and a.status='ENABLED'
+and a.r_constraint_name = b.constraint_name
+and a.r_owner  = b.owner
+and b.owner='SM_APPL'
+and b.table_name in 
+(
+'SM_VDA_TYPE'
+,'SM_VENDOR_CUSTOMER_RELATE'
+);
+
+
+
+alter table SM_APPL.SM_ENT_CATG_CD_VDA_TYP_XREF disable constraint ENT_INC_TYP_CATG_CD_XREF_FK2;
+alter table SM_APPL.SM_ENT_CUST_GPO_RE_CLS disable constraint SM_ENT_CUST_GPO_RE_CLS_FK3;
+alter table SM_APPL.SM_ENT_CUST_GPO_RE_CLS disable constraint SM_ENT_CUST_GPO_RE_CLS_FK5;
+alter table SM_APPL.SM_ENT_CUST_VDA_TYP_RE_CLS disable constraint SM_ENT_CUST_VDA_TYP_RE_CLS_FK2;
+alter table SM_APPL.SM_ENT_CUST_VDA_TYP_RE_CLS disable constraint SM_ENT_CUST_VDA_TYP_RE_CLS_FK3;
+alter table SM_APPL.SM_ENT_MFR_PRM_VDA_RECON_RPT disable constraint ENT_MFR_PRM_VDA_RECON_RPT_FK5;
+alter table SM_APPL.SM_ENT_NON_AUTH_DISTRB_RCLSD disable constraint ENT_NON_AUTH_DISTRB_RCLS_FK4;
+alter table SM_APPL.SM_ENT_VDA_ALLOC_DTL_RCLSD disable constraint ENT_VDA_ALLOC_DTL_RCLSD_FK3;
+alter table SM_APPL.SM_ENT_VDA_RECON_RPT disable constraint ENT_VDA_RECON_RPT_FK5;
+alter table SM_APPL.SM_ENT_VDA_SLE disable constraint SM_ENT_VDA_SLE_FK4;
+alter table SM_APPL.SM_ENT_PL_RPT_DTL disable constraint PL_RPT_DTL_FK5;
+alter table SM_APPL.SM_MNUL_INVC_CALC_HEADER disable constraint SM_MNUL_INVC_CALC_HEADER_FK1;
+alter table SM_APPL.SM_CRDT_MEMO_CALC_HEADER disable constraint SM_CRDT_MEMO_CALC_HEADER_FK1;
+
+
+
+
+select 'alter table '||a.owner||'.'||a.table_name||' enable novalidate constraint '||a.constraint_name||';'
+from all_constraints a, all_constraints b
+where a.constraint_type = 'R' and a.status='ENABLED'
+and a.r_constraint_name = b.constraint_name
+and a.r_owner  = b.owner
+and b.owner='SM_APPL'
+and b.table_name in 
+(
+'SM_VDA_TYPE'
+,'SM_VENDOR_CUSTOMER_RELATE'
+);
+
+alter table SM_APPL.SM_ENT_CATG_CD_VDA_TYP_XREF enable novalidate constraint ENT_INC_TYP_CATG_CD_XREF_FK2 ;
+alter table SM_APPL.SM_ENT_CUST_GPO_RE_CLS enable novalidate constraint SM_ENT_CUST_GPO_RE_CLS_FK3 ;
+alter table SM_APPL.SM_ENT_CUST_GPO_RE_CLS enable novalidate constraint SM_ENT_CUST_GPO_RE_CLS_FK5 ;
+alter table SM_APPL.SM_ENT_CUST_VDA_TYP_RE_CLS enable novalidate constraint SM_ENT_CUST_VDA_TYP_RE_CLS_FK2 ;
+alter table SM_APPL.SM_ENT_CUST_VDA_TYP_RE_CLS enable novalidate constraint SM_ENT_CUST_VDA_TYP_RE_CLS_FK3 ;
+alter table SM_APPL.SM_ENT_MFR_PRM_VDA_RECON_RPT enable novalidate constraint ENT_MFR_PRM_VDA_RECON_RPT_FK5 ;
+alter table SM_APPL.SM_ENT_NON_AUTH_DISTRB_RCLSD enable novalidate constraint ENT_NON_AUTH_DISTRB_RCLS_FK4 ;
+alter table SM_APPL.SM_ENT_VDA_ALLOC_DTL_RCLSD enable novalidate constraint ENT_VDA_ALLOC_DTL_RCLSD_FK3 ;
+alter table SM_APPL.SM_ENT_VDA_RECON_RPT enable novalidate constraint ENT_VDA_RECON_RPT_FK5 ;
+alter table SM_APPL.SM_ENT_VDA_SLE enable novalidate constraint SM_ENT_VDA_SLE_FK4 ;
+alter table SM_APPL.SM_ENT_PL_RPT_DTL enable novalidate constraint PL_RPT_DTL_FK5 ;
+alter table SM_APPL.SM_MNUL_INVC_CALC_HEADER enable novalidate constraint SM_MNUL_INVC_CALC_HEADER_FK1 ;
+alter table SM_APPL.SM_CRDT_MEMO_CALC_HEADER enable novalidate constraint SM_CRDT_MEMO_CALC_HEADER_FK1 ;
+
+
+--import
+
+DATA_PUMP_ORABACK_DIR
+
+/oraback/exp/diuatcdb/imp_DSR21498_DIUAT.par
+
+USERID="USER/PWD@exasod-np-7jrvm-scan.subiadnpdb.vcniadnonprod.oraclevcn.com:1521/diuat_ist.subiadnpdb.vcniadnonprod.oraclevcn.com"
+DIRECTORY=DATA_PUMP_ORABACK_DIR
+DUMPFILE=exp_DSR21498_DIPROD_%U.dmp
+PARALLEL=2
+LOGFILE=imp_DSR21498_DIUAT.log
+TABLE_EXISTS_ACTION=APPEND
+FULL=Y
+DATA_OPTIONS=SKIP_CONSTRAINT_ERRORS
+
+impdp parfile=/oraback/exp/diuatcdb/imp_DSR21498_DIUAT.par
+
+Job "PKANCHERLA"."SYS_IMPORT_FULL_01" successfully completed at Thu Aug 17 10:26:32 2023 elapsed 0 00:00:21
+
+[oracle@exasod-np-7jrvm1 diuatcdb]$ cat imp_DSR21498_DIUAT.log|grep -i "imported"
+. . imported "SM_APPL"."SM_VENDOR_CUSTOMER_RELATE"       15.03 KB       0 out of 887 rows
+. . imported "SM_APPL"."SM_VDA_TYPE"                     9.273 KB       0 out of 56 rows
+
+
+
+

@@ -1,0 +1,76 @@
+
+select count(*) from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD;
+
+select FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC,count(*) from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD  
+group by FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+having count(*) > 1;
+
+
+
+select FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC,count(*) from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD  
+group by FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+having count(*) > 1;
+
+
+select count(*) from 
+(
+select count(*) from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD  
+group by FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+having count(*) > 1
+);
+
+
+select * from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD 
+where 
+FISC_YR_PD_NBR='202302'
+and PURCH_UNIT_NBR='212391E'
+and DISTRB_NBR='250320'
+and MANUF_NBR='20700'
+;
+
+--find duplicate count for each combination of FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+
+select FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC,count(*) from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD  
+group by FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+having count(*) > 1;
+
+
+--Keep row wilth oldest/lowest rownum and delete other duplicate rows for combination of FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+
+DELETE from SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD 
+WHERE
+  rowid NOT IN
+  (
+    SELECT
+      MIN(rowid)
+    FROM
+      SM_APPL.SM_ENT_MFR_DLTA_SUM_ACTL_RCLSD 
+    GROUP BY
+     FISC_YR_PD_NBR, PURCH_UNIT_NBR, DISTRB_NBR, MANUF_NBR, BRND_DESC
+  );
+
+commit;
+
+
+
+3,950,670 rows deleted.
+
+
+Commit complete.
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+with tidy_dupes_up as (SELECT [DATE]
+      ,[CLUB]
+      ,[PAX]
+      ,[__FileName]
+      ,[__FilePath]
+      ,[__FileModDate]
+	  ,ROW_NUMBER() over (partition by [Club], [date] order by [__FileModDate] Desc) row_num
+  FROM [NorAmAirLounge].[WorkforceMgmt].[Delta_Actual_Pax]
+    where CLUB = 'DCA'
+)
+ 
+/*delete from tidy_dupes_up
+where row_num > 1/*
+ 
