@@ -95,6 +95,11 @@ SELECT tablespace_name AS "Tablespace",
        logging AS "Logging" 
 FROM dba_tablespaces;
 
+PROMPT <h2>3. Host Operating System Details (Native OS Output)</h2>
+PROMPT <div class="os-output">
+HOST echo "========================= hostnamectl ========================="; hostnamectl || echo "Command not found or requires elevation."; echo ""; echo "====================== /etc/os-release ======================"; cat /etc/os-release || echo "File not found."; echo ""; echo "=========================== uname -a =========================="; uname -a;
+PROMPT </div>
+
 -- Stop spooling and revert settings to normal
 SPOOL OFF
 SET MARKUP HTML OFF
