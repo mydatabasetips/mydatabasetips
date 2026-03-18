@@ -3,25 +3,40 @@ SET ECHO OFF
 SET TERMOUT OFF
 SET FEEDBACK OFF
 SET PAGESIZE 50000
-SET LINESIZE 200
+SET LINESIZE 300
 
--- Enable HTML markup and inject custom CSS for styling
-SET MARKUP HTML ON SPOOL ON PREFORMAT OFF ENTMAP ON -
+-- =========================================================================
+-- OS OUTPUT CAPTURE BLOCK
+-- Generate a temporary SQL script containing the OS info prefixed with PROMPT
+-- =========================================================================
+HOST echo 'PROMPT <div class="os-output">' > temp_os_output.sql
+HOST echo 'PROMPT ========================= hostnamectl =========================' >> temp_os_output.sql
+HOST hostnamectl | sed 's/^/PROMPT /' >> temp_os_output.sql
+HOST echo 'PROMPT ' >> temp_os_output.sql
+HOST echo 'PROMPT ====================== /etc/os-release ======================' >> temp_os_output.sql
+HOST cat /etc/os-release | sed 's/^/PROMPT /' >> temp_os_output.sql
+HOST echo 'PROMPT ' >> temp_os_output.sql
+HOST echo 'PROMPT =========================== uname -a ==========================' >> temp_os_output.sql
+HOST uname -a | sed 's/^/PROMPT /' >> temp_os_output.sql
+HOST echo 'PROMPT </div>' >> temp_os_output.sql
+
+-- Enable HTML markup with ENTMAP OFF to allow custom HTML tags
+SET MARKUP HTML ON SPOOL ON PREFORMAT OFF ENTMAP OFF -
 HEAD "<title>Oracle Database Report</title> -
 <style type='text/css'> -
   body {font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; color: #333;} -
-  table {border-collapse: collapse; width: 90%; margin: 20px auto; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);} -
+  table {border-collapse: collapse; width: 95%; margin: 20px auto; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);} -
   th {background-color: #0056b3; color: white; padding: 12px; border: 1px solid #dee2e6;} -
-  td {padding: 10px; border: 1px solid #dee2e6; text-align: left;} -
+  td {padding: 10px; border: 1px solid #dee2e6; text-align: left; word-wrap: break-word;} -
   tr:nth-child(even) {background-color: #f2f2f2;} -
   h1, h2 {text-align: center; color: #2c3e50; margin-top: 30px;} -
+  .os-output {background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; width: 95%; margin: 20px auto; text-align: left; white-space: pre-wrap; box-sizing: border-box; border: 1px solid #333;} -
 </style>" -
 BODY "id='report_body'"
 
 -- Direct output to an HTML file
 SPOOL database_info.html
 
--- Write custom HTML headers using the PROMPT command
 PROMPT <h1>Oracle Database System Report</h1>
 
 PROMPT <h2>1. Database Version</h2>
@@ -34,71 +49,52 @@ SELECT instance_name AS "Instance",
        status AS "Status", 
        startup_time AS "Started At" 
 FROM v$instance;
-
-PROMPT <h2>3. Tablespace Information</h2>
-SELECT tablespace_name AS "Tablespace", 
-       block_size AS "Block Size", 
-       status AS "Status", 
-       contents AS "Contents", 
-       logging AS "Logging" 
-FROM dba_tablespaces;
-
--- Stop spooling and revert settings to normal
-SPOOL OFF
-SET MARKUP HTML OFF
-SET TERMOUT ON
-SET FEEDBACK ON
-SET ECHO ON
-
-EXIT;-- Disable console output formatting while generating the report
-SET ECHO OFF
-SET TERMOUT OFF
-SET FEEDBACK OFF
-SET PAGESIZE 50000
-SET LINESIZE 200
-
--- Enable HTML markup and inject custom CSS for styling
-SET MARKUP HTML ON SPOOL ON PREFORMAT OFF ENTMAP ON -
-HEAD "<title>Oracle Database Report</title> -
-<style type='text/css'> -
-  body {font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; color: #333;} -
-  table {border-collapse: collapse; width: 90%; margin: 20px auto; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);} -
-  th {background-color: #0056b3; color: white; padding: 12px; border: 1px solid #dee2e6;} -
-  td {padding: 10px; border: 1px solid #dee2e6; text-align: left;} -
-  tr:nth-child(even) {background-color: #f2f2f2;} -
-  h1, h2 {text-align: center; color: #2c3e50; margin-top: 30px;} -
-</style>" -
-BODY "id='report_body'"
-
--- Direct output to an HTML file
-SPOOL database_info.html
-
--- Write custom HTML headers using the PROMPT command
-PROMPT <h1>Oracle Database System Report</h1>
-
-PROMPT <h2>1. Database Version</h2>
-SELECT banner AS "Version Information" FROM v$version;
-
-PROMPT <h2>2. Instance Details</h2>
-SELECT instance_name AS "Instance", 
-       host_name AS "Host", 
-       version AS "Version", 
-       status AS "Status", 
-       startup_time AS "Started At" 
-FROM v$instance;
-
-PROMPT <h2>3. Tablespace Information</h2>
-SELECT tablespace_name AS "Tablespace", 
-       block_size AS "Block Size", 
-       status AS "Status", 
-       contents AS "Contents", 
-       logging AS "Logging" 
-FROM dba_tablespaces;
 
 PROMPT <h2>3. Host Operating System Details (Native OS Output)</h2>
-PROMPT <div class="os-output">
-HOST echo "========================= hostnamectl ========================="; hostnamectl || echo "Command not found or requires elevation."; echo ""; echo "====================== /etc/os-release ======================"; cat /etc/os-release || echo "File not found."; echo ""; echo "=========================== uname -a =========================="; uname -a;
-PROMPT </div>
+-- Execute the temporary script we generated at the top of the file
+@temp_os_output.sql
+
+PROMPT <h2>4. Tablespace Information</h2>
+SELECT tablespace_name AS "Tablespace", 
+       block_size AS "Block Size", 
+       status AS "Status", 
+       contents AS "Contents", 
+       logging AS "Logging" 
+FROM dba_tablespaces;
+
+PROMPT <h2>5. Host System Hardware (CPU & Memory)</h2>
+SELECT stat_name AS "Statistic",
+       CASE 
+         WHEN stat_name LIKE '%BYTES%' THEN ROUND(value/1024/1024/1024, 2) || ' GB'
+         ELSE TO_CHAR(value)
+       END AS "Value",
+       comments AS "Description"
+FROM v$osstat
+WHERE stat_name IN ('NUM_CPUS', 'NUM_CPU_CORES', 'PHYSICAL_MEMORY_BYTES', 'FREE_MEMORY_BYTES')
+ORDER BY stat_name;
+
+PROMPT <h2>6. Database Storage Summary (Physical Files)</h2>
+SELECT 'Data Files' AS "Component", ROUND(SUM(bytes)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM dba_data_files
+UNION ALL
+SELECT 'Temp Files' AS "Component", ROUND(SUM(bytes)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM dba_temp_files
+UNION ALL
+SELECT 'Redo Logs' AS "Component", ROUND(SUM(bytes*members)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM v$log;
+
+PROMPT <h2>7. ASM Disk Group Usage (If Applicable)</h2>
+SELECT name AS "Disk Group", 
+       type AS "Redundancy", 
+       ROUND(total_mb/1024, 2) || ' GB' AS "Total Size", 
+       ROUND(free_mb/1024, 2) || ' GB' AS "Free Space",
+       ROUND((free_mb/total_mb)*100, 2) || ' %' AS "Free Pct"
+FROM v$asm_diskgroup;
+
+PROMPT <h2>8. All Initialization Parameters</h2>
+SELECT name AS "Parameter Name", 
+       value AS "Value", 
+       isdefault AS "Is Default", 
+       description AS "Description" 
+FROM v$parameter 
+ORDER BY name;
 
 -- Stop spooling and revert settings to normal
 SPOOL OFF
@@ -106,5 +102,8 @@ SET MARKUP HTML OFF
 SET TERMOUT ON
 SET FEEDBACK ON
 SET ECHO ON
+
+-- Clean up the temporary OS output script
+HOST rm temp_os_output.sql
 
 EXIT;
