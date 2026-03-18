@@ -7,18 +7,23 @@ SET LINESIZE 300
 
 -- =========================================================================
 -- OS OUTPUT CAPTURE BLOCK
--- Generate a temporary SQL script containing the OS info prefixed with PROMPT
+-- Parse native Linux commands into formatted HTML tables using AWK
 -- =========================================================================
-HOST echo 'PROMPT <div class="os-output">' > temp_os_output.sql
-HOST echo 'PROMPT ========================= hostnamectl =========================' >> temp_os_output.sql
-HOST hostnamectl | sed 's/^/PROMPT /' >> temp_os_output.sql
-HOST echo 'PROMPT ' >> temp_os_output.sql
-HOST echo 'PROMPT ====================== /etc/os-release ======================' >> temp_os_output.sql
-HOST cat /etc/os-release | sed 's/^/PROMPT /' >> temp_os_output.sql
-HOST echo 'PROMPT ' >> temp_os_output.sql
-HOST echo 'PROMPT =========================== uname -a ==========================' >> temp_os_output.sql
-HOST uname -a | sed 's/^/PROMPT /' >> temp_os_output.sql
-HOST echo 'PROMPT </div>' >> temp_os_output.sql
+HOST echo 'PROMPT <table>' > temp_os_output.sql
+
+-- Parse hostnamectl (Splits by colon, trims leading spaces)
+HOST echo 'PROMPT <tr><th colspan="2">System Identification (hostnamectl)</th></tr>' >> temp_os_output.sql
+HOST hostnamectl 2>/dev/null | awk -F':' '/:/ {gsub(/^[ \t]+/, "", $1); gsub(/^[ \t]+/, "", $2); print "PROMPT <tr><td style=\"width:30%; font-weight:bold;\">" $1 "</td><td>" $2 "</td></tr>"}' >> temp_os_output.sql
+
+-- Parse /etc/os-release (Splits by equals sign, strips quotes)
+HOST echo 'PROMPT <tr><th colspan="2">OS Release Details (/etc/os-release)</th></tr>' >> temp_os_output.sql
+HOST cat /etc/os-release 2>/dev/null | awk -F'=' '/=/ {gsub(/"/,"",$2); print "PROMPT <tr><td style=\"font-weight:bold;\">" $1 "</td><td>" $2 "</td></tr>"}' >> temp_os_output.sql
+
+-- Parse uname -a (Prints as a single monospace row)
+HOST echo 'PROMPT <tr><th colspan="2">Kernel Information (uname -a)</th></tr>' >> temp_os_output.sql
+HOST uname -a 2>/dev/null | awk '{print "PROMPT <tr><td colspan=\"2\" style=\"font-family: monospace; padding: 15px;\">" $0 "</td></tr>"}' >> temp_os_output.sql
+
+HOST echo 'PROMPT </table>' >> temp_os_output.sql
 
 -- Enable HTML markup with ENTMAP OFF to allow custom HTML tags
 SET MARKUP HTML ON SPOOL ON PREFORMAT OFF ENTMAP OFF -
@@ -30,7 +35,6 @@ HEAD "<title>Oracle Database Report</title> -
   td {padding: 10px; border: 1px solid #dee2e6; text-align: left; word-wrap: break-word;} -
   tr:nth-child(even) {background-color: #f2f2f2;} -
   h1, h2 {text-align: center; color: #2c3e50; margin-top: 30px;} -
-  .os-output {background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; width: 95%; margin: 20px auto; text-align: left; white-space: pre-wrap; box-sizing: border-box; border: 1px solid #333;} -
 </style>" -
 BODY "id='report_body'"
 
@@ -62,7 +66,7 @@ SELECT tablespace_name AS "Tablespace",
        logging AS "Logging" 
 FROM dba_tablespaces;
 
-PROMPT <h2>5. Host System Hardware (CPU & Memory)</h2>
+PROMPT <h2>5. Host System Hardware (CPU & Memory from DB perspective)</h2>
 SELECT stat_name AS "Statistic",
        CASE 
          WHEN stat_name LIKE '%BYTES%' THEN ROUND(value/1024/1024/1024, 2) || ' GB'
