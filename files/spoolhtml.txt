@@ -19,6 +19,10 @@ HOST hostnamectl 2>/dev/null | awk -F':' '/:/ {gsub(/^[ \t]+/, "", $1); gsub(/^[
 HOST echo 'PROMPT <tr><th colspan="2">OS Release Details (/etc/os-release)</th></tr>' >> temp_os_output.sql
 HOST cat /etc/os-release 2>/dev/null | awk -F'=' '/=/ {gsub(/"/,"",$2); print "PROMPT <tr><td style=\"font-weight:bold;\">" $1 "</td><td>" $2 "</td></tr>"}' >> temp_os_output.sql
 
+-- Parse lscpu (Filters for CPU, Thread, Core, Socket. Splits by colon)
+HOST echo 'PROMPT <tr><th colspan="2">CPU Architecture (lscpu)</th></tr>' >> temp_os_output.sql
+HOST lscpu 2>/dev/null | awk -F':' '/^Thread|^Core|^Socket|^CPU\(/ {gsub(/^[ \t]+/, "", $1); gsub(/^[ \t]+/, "", $2); print "PROMPT <tr><td style=\"font-weight:bold;\">" $1 "</td><td>" $2 "</td></tr>"}' >> temp_os_output.sql
+
 -- Parse uname -a (Prints as a single monospace row)
 HOST echo 'PROMPT <tr><th colspan="2">Kernel Information (uname -a)</th></tr>' >> temp_os_output.sql
 HOST uname -a 2>/dev/null | awk '{print "PROMPT <tr><td colspan=\"2\" style=\"font-family: monospace; padding: 15px;\">" $0 "</td></tr>"}' >> temp_os_output.sql
@@ -82,9 +86,19 @@ SELECT 'Data Files' AS "Component", ROUND(SUM(bytes)/1024/1024/1024, 2) || ' GB'
 UNION ALL
 SELECT 'Temp Files' AS "Component", ROUND(SUM(bytes)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM dba_temp_files
 UNION ALL
-SELECT 'Redo Logs' AS "Component", ROUND(SUM(bytes*members)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM v$log;
+SELECT 'Redo Logs (Total Size)' AS "Component", ROUND(SUM(bytes*members)/1024/1024/1024, 2) || ' GB' AS "Allocated Size" FROM v$log;
 
-PROMPT <h2>7. ASM Disk Group Usage (If Applicable)</h2>
+PROMPT <h2>7. Redo Log Information</h2>
+SELECT group# AS "Group Number", 
+       thread# AS "Thread", 
+       members AS "Members", 
+       ROUND(bytes/1024/1024, 2) || ' MB' AS "File Size (MB)", 
+       status AS "Status", 
+       archived AS "Archived"
+FROM v$log
+ORDER BY group#;
+
+PROMPT <h2>8. ASM Disk Group Usage (If Applicable)</h2>
 SELECT name AS "Disk Group", 
        type AS "Redundancy", 
        ROUND(total_mb/1024, 2) || ' GB' AS "Total Size", 
@@ -92,7 +106,7 @@ SELECT name AS "Disk Group",
        ROUND((free_mb/total_mb)*100, 2) || ' %' AS "Free Pct"
 FROM v$asm_diskgroup;
 
-PROMPT <h2>8. All Initialization Parameters</h2>
+PROMPT <h2>9. All Initialization Parameters</h2>
 SELECT name AS "Parameter Name", 
        value AS "Value", 
        isdefault AS "Is Default", 
