@@ -125,3 +125,26 @@ SET ECHO ON
 HOST rm temp_os_output.sql
 
 EXIT;
+
+
+-- =========================================================================
+-- OS OUTPUT CAPTURE BLOCK
+-- Convert Linux commands into a dynamic SQL query to prevent HTML rendering bugs.
+-- \x27 is used in awk to safely print single quotes without breaking bash syntax.
+-- =========================================================================
+HOST echo 'SELECT ''Source'' AS "OS Command", ''Property'' AS "Property", ''Value'' AS "Value" FROM dual WHERE 1=2' > temp_os_output.sql
+
+-- Parse hostnamectl
+HOST hostnamectl 2>/dev/null | awk -F':' '/:/ {gsub(/^[ \t]+/, "", $1); gsub(/^[ \t]+/, "", $2); gsub(/\x27/, "", $1); gsub(/\x27/, "", $2); print "UNION ALL SELECT \x27hostnamectl\x27, \x27" $1 "\x27, \x27" $2 "\x27 FROM dual"}' >> temp_os_output.sql
+
+-- Parse /etc/os-release
+HOST cat /etc/os-release 2>/dev/null | awk -F'=' '/=/ {gsub(/"/, "", $2); gsub(/\x27/, "", $1); gsub(/\x27/, "", $2); print "UNION ALL SELECT \x27/etc/os-release\x27, \x27" $1 "\x27, \x27" $2 "\x27 FROM dual"}' >> temp_os_output.sql
+
+-- Parse lscpu
+HOST lscpu 2>/dev/null | awk -F':' '/^Thread|^Core|^Socket|^CPU\(/ {gsub(/^[ \t]+/, "", $1); gsub(/^[ \t]+/, "", $2); gsub(/\x27/, "", $1); gsub(/\x27/, "", $2); print "UNION ALL SELECT \x27lscpu\x27, \x27" $1 "\x27, \x27" $2 "\x27 FROM dual"}' >> temp_os_output.sql
+
+-- Parse uname -a
+HOST uname -a 2>/dev/null | awk '{gsub(/\x27/, "", $0); print "UNION ALL SELECT \x27uname -a\x27, \x27Kernel Info\x27, \x27" $0 "\x27 FROM dual"}' >> temp_os_output.sql
+
+-- Terminate the SQL statement
+HOST echo '/' >> temp_os_output.sql
